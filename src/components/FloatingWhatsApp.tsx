@@ -61,9 +61,12 @@ export default function FloatingWhatsApp() {
 
   const currentHour = new Date().getHours();
   const isBusinessHours = currentHour >= 9 && currentHour < 18;
+  
+  // Dynamically capture the current page URL to provide context to the agent
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
   const message = isBusinessHours 
-    ? 'Hi Agriya Travels, I am interested in your travel packages' 
-    : 'We are currently offline, leave us a message';
+    ? `Hi Agriya Travels, I am interested in your travel packages. I am currently looking at this page: ${currentUrl}` 
+    : `Hello Agriya Travels, I have a travel inquiry. I am currently looking at this page: ${currentUrl}`;
   
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 

@@ -42,12 +42,13 @@ function AnimatedRoutes() {
   const location = useLocation();
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/india-tours" element={<PackagesPage filterCategory="India" title="India Tour Packages" description="Explore the beauty of India with our meticulously crafted tour packages." />} />
-        <Route path="/international-tours" element={<PackagesPage filterCategory="International" title="International Holidays" description="Discover the world with our premium international holiday packages." />} />
-        <Route path="/theme-tours" element={<PackagesPage filterCategory="Theme" title="Theme-Based Tours" description="Curated itineraries based on your unique travel preferences." />} />
+      <div key={location.pathname}>
+        <Routes location={location}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/india-tours" element={<PackagesPage filterCategory="India" title="India Tour Packages" description="Explore the beauty of India with our meticulously crafted tour packages." />} />
+          <Route path="/international-tours" element={<PackagesPage filterCategory="International" title="International Holidays" description="Discover the world with our premium international holiday packages." />} />
+          <Route path="/theme-tours" element={<PackagesPage filterCategory="Theme" title="Theme-Based Tours" description="Curated itineraries based on your unique travel preferences." />} />
         
         {/* The rest could reuse a generic Content page or Contact for now */}
         <Route path="/rentals" element={<ContactPage focus="rentals" title="Car & Vehicle Rentals" />} />
@@ -60,6 +61,7 @@ function AnimatedRoutes() {
         
         <Route path="*" element={<Home />} />
       </Routes>
+      </div>
     </AnimatePresence>
   );
 }

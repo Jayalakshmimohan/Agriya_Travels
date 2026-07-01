@@ -8,9 +8,11 @@ import FAQSection from '../components/FAQSection';
 import SEO from '../components/SEO';
 import { tourPackages, testimonials, WHATSAPP_NUMBER } from '../data';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, MapPin, HeartHandshake, Car, MessageCircle } from 'lucide-react';
+import { ShieldCheck, MapPin, HeartHandshake, Car, MessageCircle, Compass } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 import PageTransition from '../components/PageTransition';
+import InteractiveTravelMap from '../components/InteractiveTravelMap';
+import WeatherWidget from '../components/WeatherWidget';
 
 const FEATURES = [
   { icon: ShieldCheck, title: 'Trusted Experts', desc: 'Over a decade of experience planning flawless trips from Chennai.' },
@@ -54,6 +56,9 @@ export default function Home() {
             </div>
              <Link to="/india-tours" className="text-[10px] text-center font-bold text-theme-gold uppercase tracking-wider block sm:hidden mt-2">View All Packages &rarr;</Link>
           </section>
+
+          {/* Interactive Travel Map */}
+          <InteractiveTravelMap />
 
           {/* Why Choose Us */}
           <section className="bg-theme-navy text-white rounded-[2rem] p-8 sm:p-10 shadow-2xl relative overflow-hidden group">
@@ -125,6 +130,31 @@ export default function Home() {
         <aside className="lg:col-span-4 flex flex-col gap-6">
           <div className="sticky top-24 flex flex-col gap-6">
             <AITripPlanner />
+
+            {/* Travel Inspiration Feature Card */}
+            <div className="bg-gradient-to-br from-theme-navy to-[#1a3040] text-white rounded-3xl p-6 shadow-xl border border-theme-teal/30 relative overflow-hidden group">
+              <div className="absolute top-[-20%] right-[-20%] w-32 h-32 bg-theme-gold/15 rounded-full blur-xl pointer-events-none" />
+              <div className="relative z-10 flex flex-col gap-4">
+                <span className="text-[9px] font-bold uppercase tracking-widest text-theme-gold flex items-center gap-1.5 bg-white/5 py-1 px-2.5 rounded-full border border-white/10 self-start">
+                  <Compass className="h-3 w-3 animate-spin" style={{ animationDuration: '6s' }} /> Can't decide where to go?
+                </span>
+                <div>
+                  <h4 className="font-serif font-bold text-lg leading-snug">Travel Inspiration Hub</h4>
+                  <p className="text-[11px] text-slate-300 font-light leading-relaxed mt-1">
+                    Feeling adventurous but don't know where to start? Let destiny choose or browse premium handpicked secret getaways.
+                  </p>
+                </div>
+                <Link
+                  to="/ai-planner?tab=inspiration"
+                  className="bg-theme-gold hover:bg-[#ebd074] text-theme-heading text-xs font-bold py-3 px-5 rounded-xl transition-all hover:-translate-y-0.5 text-center shadow-lg shadow-theme-gold/10"
+                >
+                  Spin the Wheel of Destiny &rarr;
+                </Link>
+              </div>
+            </div>
+
+            {/* Real-time Weather Planning Widget */}
+            <WeatherWidget />
             
             <div className="bg-theme-card rounded-3xl p-6 shadow-sm border border-theme-border flex flex-col">
                <h3 className="text-sm font-bold flex items-center gap-2 text-theme-heading mb-4 uppercase tracking-widest">
