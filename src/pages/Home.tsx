@@ -10,6 +10,7 @@ import { tourPackages, testimonials, WHATSAPP_NUMBER } from '../data';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, MapPin, HeartHandshake, Car, MessageCircle } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
+import PageTransition from '../components/PageTransition';
 
 const FEATURES = [
   { icon: ShieldCheck, title: 'Trusted Experts', desc: 'Over a decade of experience planning flawless trips from Chennai.' },
@@ -25,7 +26,7 @@ export default function Home() {
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi Agriya Travels, I am looking to plan a trip.')}`;
 
   return (
-    <>
+    <PageTransition>
       <SEO 
         title="Home" 
         description="Agriya Travels - Chennai's premium travel partner offering custom India tours, international holidays, and corporate travel services." 
@@ -165,6 +166,6 @@ export default function Home() {
         </a>
       </div>
     </div>
-    </>
+    </PageTransition>
   );
 }

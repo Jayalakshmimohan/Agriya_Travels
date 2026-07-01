@@ -1,9 +1,10 @@
 import AITripPlanner from '../components/AITripPlanner';
 import SEO from '../components/SEO';
+import PageTransition from '../components/PageTransition';
 
 export default function AiTripPlannerPage() {
   return (
-    <>
+    <PageTransition>
       <SEO 
         title="Trip Planner" 
         description="Plan your next holiday instantly with Agriya Travels' AI-Powered Trip Planner. Get a day-by-day customized itinerary based on your preferences."
@@ -26,6 +27,6 @@ export default function AiTripPlannerPage() {
         <AITripPlanner />
       </div>
     </div>
-    </>
+    </PageTransition>
   );
 }

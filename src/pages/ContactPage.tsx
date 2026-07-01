@@ -1,6 +1,7 @@
 import ContactForm from '../components/ContactForm';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import SEO from '../components/SEO';
+import PageTransition from '../components/PageTransition';
 
 interface ContactPageProps {
   title?: string;
@@ -17,7 +18,7 @@ export default function ContactPage({ title = "Contact Us", focus = 'general' }:
   }
 
   return (
-    <>
+    <PageTransition>
       <SEO 
         title={title} 
         description={description}
@@ -92,6 +93,6 @@ export default function ContactPage({ title = "Contact Us", focus = 'general' }:
         </div>
       </div>
     </div>
-    </>
+    </PageTransition>
   );
 }

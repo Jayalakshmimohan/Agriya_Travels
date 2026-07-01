@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import SEO from '../components/SEO';
+import PageTransition from '../components/PageTransition';
 
 const IMAGES = [
   'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&q=80&w=800',
@@ -18,7 +19,7 @@ export default function GalleryPage() {
   const getHighRes = (src: string) => src.replace('&w=800', '&w=1600');
 
   return (
-    <>
+    <PageTransition>
       <SEO 
         title="Gallery" 
         description="A glimpse into the extraordinary moments captured across our tours. Explore the beauty of our destinations."
@@ -90,6 +91,6 @@ export default function GalleryPage() {
         )}
       </AnimatePresence>
     </div>
-    </>
+    </PageTransition>
   );
 }

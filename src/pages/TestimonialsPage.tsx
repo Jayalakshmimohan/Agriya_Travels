@@ -2,10 +2,11 @@ import React from 'react';
 import { testimonials } from '../data';
 import TestimonialCard from '../components/TestimonialCard';
 import SEO from '../components/SEO';
+import PageTransition from '../components/PageTransition';
 
 export default function TestimonialsPage() {
   return (
-    <>
+    <PageTransition>
       <SEO 
         title="Testimonials" 
         description="Read what our happy travelers have to say about their unforgettable experiences with Agriya Travels."
@@ -30,6 +31,6 @@ export default function TestimonialsPage() {
         </div>
       </div>
     </div>
-    </>
+    </PageTransition>
   );
 }

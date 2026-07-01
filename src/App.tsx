@@ -1,10 +1,12 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
+import { AnimatePresence } from 'motion/react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 
 import QuickQuoteModal from './components/QuickQuoteModal';
+import BackToTopButton from './components/BackToTopButton';
 
 import { HelmetProvider } from 'react-helmet-async';
 import { CurrencyProvider } from './context/CurrencyContext';
@@ -36,6 +38,32 @@ function LoadingFallback() {
   );
 }
 
+function AnimatedRoutes() {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/india-tours" element={<PackagesPage filterCategory="India" title="India Tour Packages" description="Explore the beauty of India with our meticulously crafted tour packages." />} />
+        <Route path="/international-tours" element={<PackagesPage filterCategory="International" title="International Holidays" description="Discover the world with our premium international holiday packages." />} />
+        <Route path="/theme-tours" element={<PackagesPage filterCategory="Theme" title="Theme-Based Tours" description="Curated itineraries based on your unique travel preferences." />} />
+        
+        {/* The rest could reuse a generic Content page or Contact for now */}
+        <Route path="/rentals" element={<ContactPage focus="rentals" title="Car & Vehicle Rentals" />} />
+        <Route path="/corporate" element={<ContactPage focus="corporate" title="Corporate Travel Support" />} />
+        <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/testimonials" element={<TestimonialsPage />} />
+        
+        <Route path="/ai-planner" element={<AiTripPlannerPage />} />
+        <Route path="/contact" element={<ContactPage title="Contact Us" />} />
+        
+        <Route path="*" element={<Home />} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
 export default function App() {
   return (
     <CurrencyProvider>
@@ -46,29 +74,13 @@ export default function App() {
             <Header />
             <main className="flex-1">
               <Suspense fallback={<LoadingFallback />}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/india-tours" element={<PackagesPage filterCategory="India" title="India Tour Packages" description="Explore the beauty of India with our meticulously crafted tour packages." />} />
-                  <Route path="/international-tours" element={<PackagesPage filterCategory="International" title="International Holidays" description="Discover the world with our premium international holiday packages." />} />
-                  <Route path="/theme-tours" element={<PackagesPage filterCategory="Theme" title="Theme-Based Tours" description="Curated itineraries based on your unique travel preferences." />} />
-                  
-                  {/* The rest could reuse a generic Content page or Contact for now */}
-                  <Route path="/rentals" element={<ContactPage focus="rentals" title="Car & Vehicle Rentals" />} />
-                  <Route path="/corporate" element={<ContactPage focus="corporate" title="Corporate Travel Support" />} />
-                  <Route path="/gallery" element={<GalleryPage />} />
-                  <Route path="/testimonials" element={<TestimonialsPage />} />
-                  
-                  <Route path="/ai-planner" element={<AiTripPlannerPage />} />
-                  <Route path="/contact" element={<ContactPage title="Contact Us" />} />
-                  
-                  <Route path="*" element={<Home />} />
-                </Routes>
+                <AnimatedRoutes />
               </Suspense>
             </main>
             <Footer />
             <FloatingWhatsApp />
             <QuickQuoteModal />
+            <BackToTopButton />
           </div>
         </Router>
       </HelmetProvider>

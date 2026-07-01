@@ -3,6 +3,7 @@ import { tourPackages } from '../data';
 import PackageCard from '../components/PackageCard';
 import SEO from '../components/SEO';
 import { useCurrency } from '../context/CurrencyContext';
+import PageTransition from '../components/PageTransition';
 
 interface PackagesPageProps {
   filterCategory: string;
@@ -16,7 +17,7 @@ export default function PackagesPage({ filterCategory, title, description }: Pac
   const isInternational = filterCategory === 'International';
 
   return (
-    <>
+    <PageTransition>
       <SEO 
         title={title} 
         description={description}
@@ -50,6 +51,6 @@ export default function PackagesPage({ filterCategory, title, description }: Pac
         )}
       </div>
     </div>
-    </>
+    </PageTransition>
   );
 }

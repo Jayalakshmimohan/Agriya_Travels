@@ -16,7 +16,7 @@ const faqs = [
   },
   {
     question: "Can I customize a package to suit my specific needs or budget?",
-    answer: "Absolutely. Most of our itineraries serve as a baseline. We specialize in tailoring trips—from adjusting hotel categories and transit modes to adding niche local experiences. Every journey is designed around your preferences."
+    answer: "Absolutely. Most of our itineraries serve as a baseline. We specialize in tailoring trips - from adjusting hotel categories and transit modes to adding niche local experiences. Every journey is designed around your preferences."
   },
   {
     question: "Is there 24/7 support available during the trip?",

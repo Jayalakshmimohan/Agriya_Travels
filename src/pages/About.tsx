@@ -1,9 +1,10 @@
 import { CheckCircle, Award, HeartHandshake, Map, ShieldCheck } from 'lucide-react';
 import SEO from '../components/SEO';
+import PageTransition from '../components/PageTransition';
 
 export default function About() {
   return (
-    <>
+    <PageTransition>
       <SEO 
         title="About Us" 
         description="Learn about Agriya Travels, our story, core values, and commitment to providing unparalleled travel experiences."
@@ -34,7 +35,7 @@ export default function About() {
             <h2 className="text-3xl font-serif font-bold tracking-tight text-theme-heading mb-6">Our Story</h2>
             <div className="space-y-6 text-base sm:text-lg text-theme-muted font-light leading-relaxed">
               <p>
-                Founded in Chennai, Agriya Travels was born out of a profound passion for exploration. We understand that travel is not just about visiting places—it's about the memories you create, the cultures you embrace, and the stories you bring back home.
+                Founded in Chennai, Agriya Travels was born out of a profound passion for exploration. We understand that travel is not just about visiting places - it's about the memories you create, the cultures you embrace, and the stories you bring back home.
               </p>
               <p>
                 Over the years, we have grown into a premier comprehensive tour operator. Our specialties span highly customized domestic tours across India, immersive outbound international holidays, soul-stirring pilgrimage trips, and incredibly seamless corporate travel management.
@@ -89,6 +90,6 @@ export default function About() {
         </div>
       </div>
     </div>
-    </>
+    </PageTransition>
   );
 }
