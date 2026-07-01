@@ -2,6 +2,7 @@ import ContactForm from '../components/ContactForm';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import SEO from '../components/SEO';
 import PageTransition from '../components/PageTransition';
+import LazyImage from '../components/LazyImage';
 
 interface ContactPageProps {
   title?: string;
@@ -84,8 +85,56 @@ export default function ContactPage({ title = "Contact Us", focus = 'general' }:
           <div className="lg:col-span-2 relative">
              {focus === 'rentals' && (
                 <div className="mb-8 rounded-2xl bg-theme-card border border-theme-border shadow-sm p-6">
-                   <h4 className="font-bold font-serif text-theme-heading mb-2">Available Fleet</h4>
-                   <p className="text-sm text-theme-muted font-light">Sedans (Dezire, Etios), SUVs (Innova, Crysta), Tempo Travellers (12-26 seaters), and Luxury Vans. Let us know your requirement in the message box below.</p>
+                   <h4 className="font-bold font-serif text-theme-heading mb-4">Available Fleet</h4>
+                   
+                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                     <div className="flex flex-col gap-2">
+                       <LazyImage 
+                         src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=600" 
+                         alt="Sedan" 
+                         containerClassName="aspect-[4/3] rounded-lg"
+                         className="w-full h-full object-cover"
+                         referrerPolicy="no-referrer"
+                       />
+                       <span className="text-xs font-bold text-center text-theme-heading">Sedans<br/><span className="font-light text-theme-muted">(Dezire, Etios)</span></span>
+                     </div>
+                     <div className="flex flex-col gap-2">
+                       <LazyImage 
+                         src="https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&q=80&w=600" 
+                         alt="SUV" 
+                         containerClassName="aspect-[4/3] rounded-lg"
+                         className="w-full h-full object-cover"
+                         referrerPolicy="no-referrer"
+                       />
+                       <span className="text-xs font-bold text-center text-theme-heading">SUVs<br/><span className="font-light text-theme-muted">(Innova, Crysta)</span></span>
+                     </div>
+                     <div className="flex flex-col gap-2">
+                       <LazyImage 
+                         src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&q=80&w=600" 
+                         alt="Tempo Traveller" 
+                         containerClassName="aspect-[4/3] rounded-lg"
+                         className="w-full h-full object-cover"
+                         referrerPolicy="no-referrer"
+                       />
+                       <span className="text-xs font-bold text-center text-theme-heading">Tempo Travellers<br/><span className="font-light text-theme-muted">(12-26 seaters)</span></span>
+                     </div>
+                     <div className="flex flex-col gap-2">
+                       <LazyImage 
+                         src="https://images.unsplash.com/photo-1516733968668-dbdce39c4651?auto=format&fit=crop&q=80&w=600" 
+                         alt="Luxury Van" 
+                         containerClassName="aspect-[4/3] rounded-lg"
+                         className="w-full h-full object-cover"
+                         referrerPolicy="no-referrer"
+                       />
+                       <span className="text-xs font-bold text-center text-theme-heading">Luxury Vans<br/><span className="font-light text-theme-muted">Premium</span></span>
+                     </div>
+                   </div>
+
+                   <div className="bg-theme-navy/5 p-3 rounded-xl border border-theme-border/50">
+                     <p className="text-xs text-theme-muted font-light italic">
+                       * Disclaimer: The vehicle images shown above are for visual representation and planning purposes only. The actual vehicle model, color, and condition may vary based on availability. Let us know your requirement in the message box below.
+                     </p>
+                   </div>
                 </div>
              )}
             <ContactForm focus={focus} />

@@ -3,7 +3,7 @@ import { Sparkles, Loader2, MessageSquare, Compass, Phone, Calendar, MapPin, Use
 import { motion, AnimatePresence } from 'motion/react';
 import { AITripRequest } from '../types';
 import { WHATSAPP_NUMBER } from '../data';
-import html2canvas from 'html2canvas';
+import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
 
 export default function AITripPlanner() {
@@ -31,20 +31,26 @@ export default function AITripPlanner() {
     setIsDownloading(true);
     try {
       const element = itineraryRef.current;
-      const canvas = await html2canvas(element, {
-        scale: 2, // Higher quality
-        useCORS: true,
-        logging: false
+      
+      const width = element.offsetWidth;
+      const height = element.offsetHeight;
+      
+      const dataUrl = await toPng(element, {
+        pixelRatio: 2,
+        cacheBust: true,
+        style: {
+          transform: 'scale(1)',
+          transformOrigin: 'top left'
+        }
       });
       
-      const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'px',
-        format: [canvas.width, canvas.height]
+        format: [width, height]
       });
       
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.addImage(dataUrl, 'PNG', 0, 0, width, height);
       pdf.save(`AgriyaTravels_${formData.destination.replace(/[^a-zA-Z0-9]/g, '_')}_Itinerary.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);

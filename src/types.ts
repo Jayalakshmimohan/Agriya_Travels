@@ -7,6 +7,11 @@ export interface TourPackage {
   startingPrice: string;
   description: string;
   imageUrl: string;
+  weatherInfo?: {
+    historical: string;
+    bestMonths: string;
+    clothing: string;
+  };
 }
 
 export interface Testimonial {

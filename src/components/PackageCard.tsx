@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Clock, Users, MapPin, X, Share2, Check } from 'lucide-react';
+import { Clock, Users, MapPin, X, Share2, Check, CloudSun, Thermometer, Calendar, Shirt } from 'lucide-react';
 import { TourPackage } from '../types';
 import { WHATSAPP_NUMBER } from '../data';
 import { motion, AnimatePresence } from 'motion/react';
@@ -187,6 +187,38 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' 
                   <div className="text-sm font-bold text-theme-heading">{pkg.bestFor}</div>
                 </div>
               </div>
+
+              {pkg.weatherInfo && (
+                <div className="bg-theme-navy/5 p-5 rounded-2xl border border-theme-border/50 mb-6">
+                  <h4 className="text-sm font-bold text-theme-heading mb-4 flex items-center gap-2">
+                    <CloudSun className="h-4 w-4 text-theme-teal" /> 
+                    Weather Predictor & Tips
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex gap-3">
+                      <Thermometer className="h-4 w-4 text-theme-muted shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-[10px] uppercase font-bold text-theme-muted">Historical Weather</div>
+                        <div className="text-xs font-medium text-theme-heading">{pkg.weatherInfo.historical}</div>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <Calendar className="h-4 w-4 text-theme-muted shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-[10px] uppercase font-bold text-theme-muted">Best Months to Visit</div>
+                        <div className="text-xs font-medium text-theme-heading">{pkg.weatherInfo.bestMonths}</div>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <Shirt className="h-4 w-4 text-theme-muted shrink-0 mt-0.5" />
+                      <div>
+                        <div className="text-[10px] uppercase font-bold text-theme-muted">Clothing Suggestions</div>
+                        <div className="text-xs font-medium text-theme-heading">{pkg.weatherInfo.clothing}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="flex items-center justify-between border-t border-slate-100 pt-6 mt-auto">
                 <div>
