@@ -1,0 +1,6 @@
+{
+  "name": "Agriya Travels",
+  "description": "Premium mobile-responsive website for Agriya Travels, an India-based travel agent and tour operator offering a wide array of tours, rentals, and AI trip planning.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

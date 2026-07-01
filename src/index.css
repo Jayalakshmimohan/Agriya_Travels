@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --theme-navy: #0B192C;
+  --theme-heading: #0B192C;
+  --theme-bg: #FAFAFA;
+  --theme-card: #FFFFFF;
+  --theme-border: #f1f5f9;
+  --theme-muted: #64748b;
+  --theme-gold: #D4AF37;
+  --theme-teal: #1D3557;
+}
+
+.dark {
+  --theme-navy: #030812;
+  --theme-heading: #f8fafc;
+  --theme-bg: #040914;
+  --theme-card: #0B192C;
+  --theme-border: #1D3557;
+  --theme-muted: #94a3b8;
+}
+
+@theme {
+  --color-theme-navy: var(--theme-navy);
+  --color-theme-heading: var(--theme-heading);
+  --color-theme-bg: var(--theme-bg);
+  --color-theme-card: var(--theme-card);
+  --color-theme-border: var(--theme-border);
+  --color-theme-muted: var(--theme-muted);
+  --color-theme-gold: var(--theme-gold);
+  --color-theme-teal: var(--theme-teal);
+  
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+body {
+  background-color: var(--theme-bg);
+  color: var(--theme-heading);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card-hover {
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.15);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--theme-navy);
+  border-radius: 4px;
+}
