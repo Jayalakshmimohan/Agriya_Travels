@@ -1,6 +1,6 @@
 import { TourPackage, Testimonial } from '../types';
 
-export const WHATSAPP_NUMBER = '919941938222'; 
+export const WHATSAPP_NUMBER = '919380054540'; 
 
 export const tourPackages: TourPackage[] = [
   // India

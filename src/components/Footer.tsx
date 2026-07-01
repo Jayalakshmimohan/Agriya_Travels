@@ -94,8 +94,11 @@ export default function Footer() {
           <div className="flex gap-6 uppercase tracking-[0.2em] text-[9px] font-bold text-slate-400">
              <span>24/7 Support</span>
              <span>Budget to Luxury</span>
-             <span className="hidden sm:inline">Certified Travel Experts</span>
+             <span className="hidden lg:inline">Certified Travel Experts</span>
           </div>
+          <p className="text-[10px] text-slate-400 font-medium text-center">
+            Site Designed and Maintained by BotifyX
+          </p>
           <p className="text-[10px] text-slate-400 font-light">
             &copy; {currentYear} Agriya Travels, Chennai. All rights reserved.
           </p>

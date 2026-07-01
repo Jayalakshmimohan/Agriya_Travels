@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import SEO from '../components/SEO';
 import PageTransition from '../components/PageTransition';
+import LazyImage from '../components/LazyImage';
 
 const IMAGES = [
   'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&q=80&w=800',
@@ -45,13 +46,14 @@ export default function GalleryPage() {
               className="relative overflow-hidden rounded-[1.5rem] group h-72 cursor-pointer shadow-sm hover:shadow-xl transition-all"
               onClick={() => setSelectedImage(src)}
             >
-              <img 
+              <LazyImage
                 src={src} 
                 alt={`Travel Gallery ${i + 1}`} 
-                className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
+                containerClassName="w-full h-full"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-0 bg-theme-navy/0 group-hover:bg-theme-navy/20 transition-colors" />
+              <div className="absolute inset-0 bg-theme-navy/0 group-hover:bg-theme-navy/20 transition-colors pointer-events-none" />
             </div>
           ))}
         </div>

@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Plane, Phone, ChevronDown, Moon, Sun } from 'lucide-react';
+import { Menu, X, Plane, Phone, ChevronDown, Moon, Sun, Search, MapPin } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { WHATSAPP_NUMBER } from '../data';
+import { WHATSAPP_NUMBER, tourPackages } from '../data';
 import { useCurrency } from '../context/CurrencyContext';
+import { motion, AnimatePresence } from 'motion/react';
 
 const NAV_LINKS = [
   { name: 'Home', path: '/' },
@@ -26,12 +27,31 @@ const DROPDOWN_LINKS = [
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
   const { currency, setCurrency } = useCurrency();
 
   const [isDark, setIsDark] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });
+
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 100);
+    } else {
+      setSearchQuery('');
+    }
+  }, [isSearchOpen]);
+
+  const searchResults = searchQuery.trim() === '' ? [] : tourPackages.filter(pkg => 
+    pkg.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    pkg.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    pkg.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     if (isDark) {
@@ -106,6 +126,14 @@ export default function Header() {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
+          <button 
+            onClick={() => setIsSearchOpen(true)} 
+            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors"
+            aria-label="Search Packages"
+          >
+            <Search className="h-5 w-5" />
+          </button>
+          
           <div className="relative group">
             <button className="flex items-center gap-1 text-xs font-bold text-theme-muted hover:text-theme-heading transition-colors">
               {currency} <ChevronDown className="h-3 w-3" />
@@ -145,11 +173,19 @@ export default function Header() {
         </div>
 
         {/* Mobile menu button & Theme toggle */}
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex items-center gap-1 sm:gap-2 lg:hidden">
+          <button 
+            onClick={() => setIsSearchOpen(true)} 
+            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors"
+            aria-label="Search Packages"
+          >
+            <Search className="h-5 w-5" />
+          </button>
+
           <select 
             value={currency} 
             onChange={(e) => setCurrency(e.target.value as any)}
-            className="bg-transparent text-xs font-bold text-theme-muted border-none outline-none focus:ring-0 mr-1"
+            className="bg-transparent text-xs font-bold text-theme-muted border-none outline-none focus:ring-0 mr-1 hidden sm:block"
           >
             <option value="INR">INR</option>
             <option value="USD">USD</option>
@@ -175,7 +211,7 @@ export default function Header() {
 
       {/* Mobile Nav */}
       {isMobileMenuOpen && (
-        <div className="border-b border-theme-border bg-theme-card md:hidden">
+        <div className="border-b border-theme-border bg-theme-card lg:hidden">
           <nav className="flex flex-col space-y-2 px-4 pb-6 pt-4">
             {NAV_LINKS.filter(l => !l.hasDropdown).map((link) => (
               <Link
@@ -218,6 +254,83 @@ export default function Header() {
           </nav>
         </div>
       )}
+
+      {/* Search Overlay */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-theme-card/95 backdrop-blur-md flex flex-col"
+          >
+            <div className="flex items-center px-4 sm:px-8 h-20 border-b border-theme-border shrink-0 max-w-[1400px] w-full mx-auto">
+              <Search className="h-6 w-6 text-theme-muted" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search destinations, packages, or themes..."
+                className="flex-1 bg-transparent border-none outline-none px-4 text-lg font-medium text-theme-heading placeholder:text-slate-400 focus:ring-0"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button
+                onClick={() => setIsSearchOpen(false)}
+                className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors ml-4"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-8 max-w-[1400px] w-full mx-auto">
+              {searchQuery.trim() === '' ? (
+                <div className="text-center text-theme-muted mt-12 flex flex-col items-center">
+                  <Search className="h-12 w-12 text-slate-300 mb-4" />
+                  <p className="text-lg">Type to start searching...</p>
+                </div>
+              ) : searchResults.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {searchResults.map((pkg) => (
+                    <Link
+                      key={pkg.id}
+                      to={`/${pkg.category === 'India' ? 'india-tours' : pkg.category === 'International' ? 'international-tours' : 'theme-tours'}?package=${pkg.id}`}
+                      className="group flex flex-col bg-theme-navy/5 rounded-2xl overflow-hidden hover:shadow-md transition-all border border-theme-border/50"
+                      onClick={() => setIsSearchOpen(false)}
+                    >
+                      <div className="h-32 bg-slate-200 relative overflow-hidden">
+                        <img 
+                          src={pkg.imageUrl} 
+                          alt={pkg.title} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                          referrerPolicy="no-referrer"
+                        />
+                      </div>
+                      <div className="p-4 flex flex-col flex-1">
+                        <div className="flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider text-theme-gold mb-1">
+                          <MapPin className="h-3 w-3" /> {pkg.category}
+                        </div>
+                        <h4 className="font-bold text-theme-heading text-sm mb-2 line-clamp-1">{pkg.title}</h4>
+                        <p className="text-xs text-theme-muted line-clamp-2 mt-auto">{pkg.description}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center text-theme-muted mt-12 flex flex-col items-center">
+                  <Plane className="h-12 w-12 text-slate-300 mb-4" />
+                  <p className="text-lg">No packages found for "{searchQuery}"</p>
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    className="mt-4 text-theme-gold font-bold hover:underline"
+                  >
+                    Clear Search
+                  </button>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

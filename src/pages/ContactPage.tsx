@@ -56,7 +56,7 @@ export default function ContactPage({ title = "Contact Us", focus = 'general' }:
                   </div>
                   <div className="pt-1">
                     <h4 className="text-[11px] font-bold uppercase tracking-widest text-theme-heading">Phone & WhatsApp</h4>
-                    <p className="mt-1 text-sm text-theme-muted font-light">+91 9710405044 / +91 9941938222 (WA)</p>
+                    <p className="mt-1 text-sm text-theme-muted font-light">+91 9941938222 / +91 9380054540 (WA)</p>
                   </div>
                 </li>
                 <li className="flex gap-4 items-start">

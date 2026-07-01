@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Clock, Users, MapPin, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Clock, Users, MapPin, X, Share2, Check } from 'lucide-react';
 import { TourPackage } from '../types';
 import { WHATSAPP_NUMBER } from '../data';
 import { motion, AnimatePresence } from 'motion/react';
@@ -12,6 +12,40 @@ interface PackageCardProps {
 const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+  const [isInView, setIsInView] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const imgContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleCopyLink = async () => {
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('package', pkg.id);
+      await navigator.clipboard.writeText(url.toString());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy link', err);
+    }
+  };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: '100px' }
+    );
+
+    if (imgContainerRef.current) {
+      observer.observe(imgContainerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Agriya Travels, I am interested in the ${pkg.title} package. Please share details.`)}`;
 
   let displayPrice = pkg.startingPrice;
@@ -32,18 +66,20 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' 
   return (
     <>
     <div className="bg-theme-card rounded-[1.5rem] overflow-hidden shadow-sm border border-theme-border card-hover flex flex-col group h-full">
-      <div className="h-40 sm:h-48 relative bg-slate-200 overflow-hidden">
+      <div ref={imgContainerRef} className="h-40 sm:h-48 relative bg-slate-200 overflow-hidden">
         {!imageLoaded && (
           <div className="absolute inset-0 bg-slate-200 animate-pulse z-[15]" />
         )}
         <div className="absolute inset-0 bg-theme-navy/10 group-hover:bg-transparent transition-colors duration-500 z-10" />
-        <img
-          src={pkg.imageUrl}
-          alt={pkg.title}
-          className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-110 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-          referrerPolicy="no-referrer"
-          onLoad={() => setImageLoaded(true)}
-        />
+        {isInView && (
+          <img
+            src={pkg.imageUrl}
+            alt={pkg.title}
+            className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-110 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            referrerPolicy="no-referrer"
+            onLoad={() => setImageLoaded(true)}
+          />
+        )}
         <div className={`absolute top-3 right-3 bg-theme-card/95 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold text-theme-heading shadow-lg z-20 flex items-center gap-1.5 ring-1 ring-black/5 transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <Clock className="h-3 w-3 text-theme-gold" />
           {pkg.duration}
@@ -104,12 +140,21 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' 
             transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
             className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]"
           >
-            <button
-              onClick={() => setIsQuickViewOpen(false)}
-              className="absolute top-4 right-4 z-10 bg-white/50 hover:bg-white/90 backdrop-blur-sm p-2 rounded-full text-theme-navy transition-colors focus:outline-none"
-            >
-              <X className="h-5 w-5" />
-            </button>
+            <div className="absolute top-4 right-4 z-10 flex gap-2">
+              <button
+                onClick={handleCopyLink}
+                className="bg-white/50 hover:bg-white/90 backdrop-blur-sm p-2 rounded-full text-theme-navy transition-colors focus:outline-none"
+                title="Copy Link"
+              >
+                {copied ? <Check className="h-5 w-5 text-green-600" /> : <Share2 className="h-5 w-5" />}
+              </button>
+              <button
+                onClick={() => setIsQuickViewOpen(false)}
+                className="bg-white/50 hover:bg-white/90 backdrop-blur-sm p-2 rounded-full text-theme-navy transition-colors focus:outline-none"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
             
             <div className="h-48 sm:h-56 relative shrink-0">
               <img
