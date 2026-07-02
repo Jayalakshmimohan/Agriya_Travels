@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
 
 interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -21,7 +22,7 @@ export default function LazyImage({ src, alt, containerClassName = '', className
           observer.disconnect();
         }
       },
-      { rootMargin: '100px' }
+      { rootMargin: '200px' }
     );
 
     if (containerRef.current) {
@@ -32,14 +33,19 @@ export default function LazyImage({ src, alt, containerClassName = '', className
   }, []);
 
   return (
-    <div ref={containerRef} className={`relative overflow-hidden bg-slate-200 ${containerClassName}`}>
-      {!isLoaded && <div className="absolute inset-0 animate-pulse bg-slate-300" />}
+    <div ref={containerRef} className={`relative overflow-hidden bg-slate-200 dark:bg-theme-navy/40 ${containerClassName}`}>
+      {!isLoaded && <div className="absolute inset-0 animate-pulse bg-slate-300 dark:bg-theme-border/40" />}
       {isInView && (
-        <img
+        <motion.img
           src={src}
           alt={alt}
+          loading="lazy"
           onLoad={() => setIsLoaded(true)}
-          className={`${className} transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isLoaded ? 1 : 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className={className}
+          referrerPolicy="no-referrer"
           {...props}
         />
       )}

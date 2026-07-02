@@ -45,12 +45,12 @@ export default function ContactForm({ focus = 'general' }: { focus?: 'general' |
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText)}`;
 
     return (
-      <div className="rounded-2xl bg-theme-card p-8 sm:p-12 shadow-sm ring-1 ring-gray-200 text-center flex flex-col items-center">
+      <div className="rounded-2xl bg-theme-card p-8 sm:p-12 shadow-sm ring-1 ring-gray-200 dark:ring-theme-border/60 text-center flex flex-col items-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 mb-6">
           <CheckCircle2 className="h-8 w-8 text-green-600" />
         </div>
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">Enquiry Sent Successfully!</h3>
-        <p className="text-gray-600 mb-8 max-w-md">
+        <h3 className="text-2xl font-bold text-theme-heading mb-2">Enquiry Sent Successfully!</h3>
+        <p className="text-theme-muted mb-8 max-w-md">
           Thank you for reaching out, {formData.name}. Our travel experts from Chennai will contact you shortly. Want a faster response?
         </p>
         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
@@ -68,7 +68,7 @@ export default function ContactForm({ focus = 'general' }: { focus?: 'general' |
               setIsSuccess(false);
               setFormData({name: '', phone: '', email: '', destination: '', travelDate: '', travellers: '', budget: '', message: ''});
             }}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-6 py-3.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 w-full sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-theme-border/80 px-6 py-3.5 text-sm font-semibold text-gray-700 dark:text-slate-200 transition hover:bg-gray-50 dark:hover:bg-theme-navy/40 w-full sm:w-auto"
           >
             Submit Another
           </button>
@@ -78,98 +78,98 @@ export default function ContactForm({ focus = 'general' }: { focus?: 'general' |
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-2xl bg-theme-card p-6 sm:p-10 shadow-sm ring-1 ring-gray-200 space-y-6">
+    <form onSubmit={handleSubmit} className="rounded-2xl bg-theme-card p-6 sm:p-10 shadow-sm ring-1 ring-gray-200 dark:ring-theme-border/60 space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">Full Name *</label>
           <input
             type="text"
             name="name"
             required
             value={formData.name}
             onChange={handleChange}
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+            className="w-full rounded-lg border border-gray-300 dark:border-theme-border/80 bg-white dark:bg-[#122238] px-4 py-3 text-sm text-gray-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Mobile Number *</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">Mobile Number *</label>
           <input
             type="tel"
             name="phone"
             required
-             value={formData.phone}
+            value={formData.phone}
             onChange={handleChange}
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+            className="w-full rounded-lg border border-gray-300 dark:border-theme-border/80 bg-white dark:bg-[#122238] px-4 py-3 text-sm text-gray-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">Email Address</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+            className="w-full rounded-lg border border-gray-300 dark:border-theme-border/80 bg-white dark:bg-[#122238] px-4 py-3 text-sm text-gray-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Destination</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">Preferred Destination</label>
           <input
             type="text"
             name="destination"
             value={formData.destination}
             onChange={handleChange}
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+            className="w-full rounded-lg border border-gray-300 dark:border-theme-border/80 bg-white dark:bg-[#122238] px-4 py-3 text-sm text-gray-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Travel Date</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">Travel Date</label>
           <input
             type="date"
             name="travelDate"
             value={formData.travelDate}
             onChange={handleChange}
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+            className="w-full rounded-lg border border-gray-300 dark:border-theme-border/80 bg-white dark:bg-[#122238] px-4 py-3 text-sm text-gray-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none"
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Travellers</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">Travellers</label>
             <input
               type="number"
-               name="travellers"
-               min="1"
+              name="travellers"
+              min="1"
               value={formData.travellers}
               onChange={handleChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+              className="w-full rounded-lg border border-gray-300 dark:border-theme-border/80 bg-white dark:bg-[#122238] px-4 py-3 text-sm text-gray-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Budget</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">Budget</label>
             <select
               name="budget"
               value={formData.budget}
               onChange={handleChange}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+              className="w-full rounded-lg border border-gray-300 dark:border-theme-border/80 bg-white dark:bg-[#122238] px-4 py-3 text-sm text-gray-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none"
             >
-              <option value="">Select</option>
-              <option>Economy</option>
-              <option>Standard</option>
-              <option>Premium</option>
-              <option>Luxury</option>
+              <option value="" className="bg-white dark:bg-[#0B192C] text-gray-900 dark:text-white">Select</option>
+              <option className="bg-white dark:bg-[#0B192C] text-gray-900 dark:text-white">Economy</option>
+              <option className="bg-white dark:bg-[#0B192C] text-gray-900 dark:text-white">Standard</option>
+              <option className="bg-white dark:bg-[#0B192C] text-gray-900 dark:text-white">Premium</option>
+              <option className="bg-white dark:bg-[#0B192C] text-gray-900 dark:text-white">Luxury</option>
             </select>
           </div>
         </div>
       </div>
       
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Message or Special Requests</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">Message or Special Requests</label>
         <textarea
           name="message"
           rows={4}
           value={formData.message}
           onChange={handleChange}
-          className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20"
+          className="w-full rounded-lg border border-gray-300 dark:border-theme-border/80 bg-white dark:bg-[#122238] px-4 py-3 text-sm text-gray-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none"
         ></textarea>
       </div>
 

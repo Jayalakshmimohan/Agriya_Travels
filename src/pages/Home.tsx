@@ -13,6 +13,7 @@ import { useCurrency } from '../context/CurrencyContext';
 import PageTransition from '../components/PageTransition';
 import InteractiveTravelMap from '../components/InteractiveTravelMap';
 import WeatherWidget from '../components/WeatherWidget';
+import TravelTipsTrends from '../components/TravelTipsTrends';
 
 const FEATURES = [
   { icon: ShieldCheck, title: 'Trusted Experts', desc: 'Over a decade of experience planning flawless trips from Chennai.' },
@@ -59,6 +60,12 @@ export default function Home() {
 
           {/* Interactive Travel Map */}
           <InteractiveTravelMap />
+
+          {/* Travel Tips & Trends */}
+          <TravelTipsTrends />
+
+          {/* Real-time Weather Planning Widget */}
+          <WeatherWidget />
 
           {/* Why Choose Us */}
           <section className="bg-theme-navy text-white rounded-[2rem] p-8 sm:p-10 shadow-2xl relative overflow-hidden group">
@@ -128,11 +135,13 @@ export default function Home() {
         </div>
 
         <aside className="lg:col-span-4 flex flex-col gap-6">
-          <div className="sticky top-24 flex flex-col gap-6">
-            <AITripPlanner />
+          <div className="lg:sticky lg:top-24 flex flex-col gap-6 lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto custom-scrollbar pr-1 pb-32">
+            <div className="shrink-0 w-full h-[540px]">
+              <AITripPlanner />
+            </div>
 
             {/* Travel Inspiration Feature Card */}
-            <div className="bg-gradient-to-br from-theme-navy to-[#1a3040] text-white rounded-3xl p-6 shadow-xl border border-theme-teal/30 relative overflow-hidden group">
+            <div className="bg-gradient-to-br from-theme-navy to-[#1a3040] text-white rounded-3xl p-6 shadow-xl border border-theme-teal/30 relative overflow-hidden group shrink-0">
               <div className="absolute top-[-20%] right-[-20%] w-32 h-32 bg-theme-gold/15 rounded-full blur-xl pointer-events-none" />
               <div className="relative z-10 flex flex-col gap-4">
                 <span className="text-[9px] font-bold uppercase tracking-widest text-theme-gold flex items-center gap-1.5 bg-white/5 py-1 px-2.5 rounded-full border border-white/10 self-start">
@@ -153,10 +162,9 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Real-time Weather Planning Widget */}
-            <WeatherWidget />
+
             
-            <div className="bg-theme-card rounded-3xl p-6 shadow-sm border border-theme-border flex flex-col">
+            <div className="bg-theme-card rounded-3xl p-6 shadow-sm border border-theme-border flex flex-col shrink-0">
                <h3 className="text-sm font-bold flex items-center gap-2 text-theme-heading mb-4 uppercase tracking-widest">
                   <Car className="h-4 w-4 text-theme-gold" /> Premium Transfers
                </h3>

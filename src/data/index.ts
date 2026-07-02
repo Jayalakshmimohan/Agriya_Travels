@@ -94,6 +94,66 @@ export const tourPackages: TourPackage[] = [
       clothing: 'Traditional modest wear (Mandatory: Dhoti/Kurta for men, Saree/Chudidhar for women).'
     }
   },
+  {
+    id: 'ind-7',
+    title: 'Golden Triangle Heritage Tour',
+    category: 'India',
+    duration: '5 Nights / 6 Days',
+    bestFor: 'History, Architecture',
+    startingPrice: '₹19,500',
+    description: 'Explore the iconic heritage arc of Delhi, Agra, and Jaipur. Witness the breathtaking Taj Mahal, majestic Amber Fort, and Delhi\'s historic monuments with local expert guides.',
+    imageUrl: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&q=80&w=800',
+    weatherInfo: {
+      historical: '15°C - 38°C',
+      bestMonths: 'October to March',
+      clothing: 'Comfortable light cottons for daytime, light jacket for winter nights.'
+    }
+  },
+  {
+    id: 'ind-8',
+    title: 'Leh Ladakh Wilderness Adventure',
+    category: 'India',
+    duration: '6 Nights / 7 Days',
+    bestFor: 'Adventure, Landscapes',
+    startingPrice: '₹28,000',
+    description: 'Embark on a soul-stirring journey across the high mountain passes of Ladakh. Traverse Pangong Lake, Nubra Valley, and experience magnetic hill magic under the northern sky.',
+    imageUrl: 'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&q=80&w=800',
+    weatherInfo: {
+      historical: '-15°C to 25°C',
+      bestMonths: 'May to September',
+      clothing: 'Windproof jacket, heavy thermal layers, sunglasses, and trekking shoes.'
+    }
+  },
+  {
+    id: 'ind-9',
+    title: 'Himachal Hills Escape',
+    category: 'India',
+    duration: '5 Nights / 6 Days',
+    bestFor: 'Couples, Snow Lovers',
+    startingPrice: '₹16,500',
+    description: 'Escape the city heat to the beautiful snow peaks of Shimla and Manali. Enjoy Solang Valley adventure sports, scenic Mall Road walks, and pine forest exploration.',
+    imageUrl: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&q=80&w=800',
+    weatherInfo: {
+      historical: '-2°C to 22°C',
+      bestMonths: 'October to June',
+      clothing: 'Warm layers, gloves, boots, heavy woolens if visiting during snowfall.'
+    }
+  },
+  {
+    id: 'ind-10',
+    title: 'Hampi Monolithic Wonders',
+    category: 'India',
+    duration: '3 Nights / 4 Days',
+    bestFor: 'Culture, Heritage',
+    startingPrice: '₹11,000',
+    description: 'Discover the surreal ruins of the Vijayanagara Empire. Wander among monolithic boulders, historic stone chariots, beautiful temples, and scenic Tungabhadra riverbanks.',
+    imageUrl: 'https://images.unsplash.com/photo-1722934804353-0d9f6a55ab5e?auto=format&fit=crop&q=80&w=800',
+    weatherInfo: {
+      historical: '20°C - 38°C',
+      bestMonths: 'October to March',
+      clothing: 'Light breathable clothes, sunblock, comfortable walking shoes.'
+    }
+  },
   
   // International
   {
@@ -169,6 +229,51 @@ export const tourPackages: TourPackage[] = [
       historical: '25°C - 31°C (Tropical)',
       bestMonths: 'November to April',
       clothing: 'Swimwear, light resort wear, sun protection, flip flops.'
+    }
+  },
+  {
+    id: 'int-6',
+    title: 'Bali Tropical Paradise',
+    category: 'International',
+    duration: '5 Nights / 6 Days',
+    bestFor: 'Couples, Relaxation',
+    startingPrice: '₹48,000',
+    description: 'Indulge in spiritual temple visits, emerald green rice terraces of Ubud, vibrant volcanic sunsets, and luxury beach clubs in beautiful Bali.',
+    imageUrl: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=800',
+    weatherInfo: {
+      historical: '24°C - 31°C (Tropical)',
+      bestMonths: 'April to October (Dry Season)',
+      clothing: 'Summer clothing, swimwear, light cardigan for breezy coastal nights.'
+    }
+  },
+  {
+    id: 'int-7',
+    title: 'Swiss Alps Explorer',
+    category: 'International',
+    duration: '6 Nights / 7 Days',
+    bestFor: 'Leisure, Nature',
+    startingPrice: '₹1,45,000',
+    description: 'Ride the famous Glacier Express, marvel at the mighty Matterhorn peak, and sail on serene alpine lakes in Interlaken and Lucerne. A fairytale Swiss getaway.',
+    imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&q=80&w=800',
+    weatherInfo: {
+      historical: '-5°C to 20°C',
+      bestMonths: 'June to September (Summer), Dec to March (Snow)',
+      clothing: 'Warm layers, windproof outer coat, winter boots, and woolens.'
+    }
+  },
+  {
+    id: 'int-8',
+    title: 'Japan Sakura Heritage',
+    category: 'International',
+    duration: '7 Nights / 8 Days',
+    bestFor: 'Culture, Technology',
+    startingPrice: '₹1,60,000',
+    description: 'Behold Mount Fuji, travel by hyper-fast Shinkansen bullet train, explore ancient Kyoto shrines, and dive into Tokyo\'s neon-futuristic pop culture hubs.',
+    imageUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&q=80&w=800',
+    weatherInfo: {
+      historical: '3°C - 26°C',
+      bestMonths: 'March to May (Cherry Blossom), September to November (Autumn)',
+      clothing: 'Comfortable layers, light coat, walking shoes suitable for exploring temples.'
     }
   },
 

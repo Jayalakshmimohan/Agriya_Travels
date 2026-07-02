@@ -50,7 +50,7 @@ export default function FAQSection() {
                 onClick={() => setOpenIndex(isOpen ? null : index)}
               >
                 <span className="font-bold text-theme-heading text-xs sm:text-sm pr-4">{faq.question}</span>
-                <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${isOpen ? 'bg-theme-gold text-white' : 'bg-slate-100 text-slate-400'}`}>
+                <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors ${isOpen ? 'bg-theme-gold text-white' : 'bg-slate-100 dark:bg-theme-border/50 text-slate-400'}`}>
                   <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                 </div>
               </button>

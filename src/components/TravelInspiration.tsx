@@ -586,7 +586,7 @@ export default function TravelInspiration() {
                     </div>
                     <div>
                       <p className="text-[10px] text-theme-muted uppercase tracking-wider font-bold mb-0.5">Duration</p>
-                      <p className="text-slate-800 font-bold text-sm">{tailoredResult.duration}</p>
+                      <p className="text-theme-heading font-bold text-sm">{tailoredResult.duration}</p>
                     </div>
                   </div>
 
@@ -636,7 +636,7 @@ export default function TravelInspiration() {
                             {it.day}
                           </div>
                           <div className="pt-0.5">
-                            <h5 className="text-xs font-bold text-slate-800 leading-tight">{it.title}</h5>
+                            <h5 className="text-xs font-bold text-theme-heading leading-tight">{it.title}</h5>
                             <p className="text-[10px] text-theme-muted mt-1 font-light leading-relaxed">{it.desc}</p>
                           </div>
                         </div>

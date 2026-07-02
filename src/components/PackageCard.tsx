@@ -46,6 +46,19 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' 
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const packageParam = params.get('package');
+    if (packageParam === pkg.id) {
+      setIsQuickViewOpen(true);
+      setIsInView(true); // force load image too
+      const timer = setTimeout(() => {
+        imgContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [pkg.id]);
+
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi Agriya Travels, I am interested in the ${pkg.title} package. Please share details.`)}`;
 
   let displayPrice = pkg.startingPrice;
@@ -66,16 +79,20 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' 
   return (
     <>
     <div className="bg-theme-card rounded-[1.5rem] overflow-hidden shadow-sm border border-theme-border card-hover flex flex-col group h-full">
-      <div ref={imgContainerRef} className="h-40 sm:h-48 relative bg-slate-200 overflow-hidden">
+      <div ref={imgContainerRef} className="h-40 sm:h-48 relative bg-slate-200 dark:bg-theme-navy/40 overflow-hidden">
         {!imageLoaded && (
-          <div className="absolute inset-0 bg-slate-200 animate-pulse z-[15]" />
+          <div className="absolute inset-0 bg-slate-200 dark:bg-theme-navy/40 animate-pulse z-[15]" />
         )}
         <div className="absolute inset-0 bg-theme-navy/10 group-hover:bg-transparent transition-colors duration-500 z-10" />
         {isInView && (
-          <img
+          <motion.img
             src={pkg.imageUrl}
             alt={pkg.title}
-            className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-110 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            loading="lazy"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: imageLoaded ? 1 : 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             referrerPolicy="no-referrer"
             onLoad={() => setImageLoaded(true)}
           />
@@ -91,7 +108,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' 
             <MapPin className="h-3 w-3" />
             {pkg.category}
           </div>
-          <h4 className="text-base sm:text-lg font-serif font-bold leading-tight text-theme-heading mb-2 group-hover:text-theme-teal transition-colors">{pkg.title}</h4>
+          <h4 className="text-base sm:text-lg font-serif font-bold leading-tight text-theme-heading mb-2 group-hover:text-theme-teal dark:group-hover:text-theme-gold transition-colors">{pkg.title}</h4>
           <p className="text-xs text-theme-muted line-clamp-2 leading-relaxed font-light">{pkg.description}</p>
         </div>
         
@@ -101,19 +118,19 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' 
             <span className="truncate font-medium">{pkg.bestFor}</span>
           </div>
           <div className="flex items-center gap-2">
-             <span className="text-[10px] font-bold bg-[#F1FAEE] text-theme-teal px-2 py-0.5 rounded-md truncate">Customizable</span>
+             <span className="text-[10px] font-bold bg-[#F1FAEE] dark:bg-theme-navy/40 text-theme-teal dark:text-theme-gold px-2 py-0.5 rounded-md truncate">Customizable</span>
           </div>
         </div>
 
         <div className="flex items-center justify-between mt-auto">
           <div className="flex flex-col">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Starting from</span>
+            <span className="text-[10px] text-slate-400 dark:text-theme-muted uppercase tracking-wider font-semibold">Starting from</span>
             <div className="text-sm font-bold text-[#E63946]">{displayPrice}</div>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsQuickViewOpen(true)}
-              className="flex items-center gap-1.5 bg-theme-navy/5 text-theme-navy px-4 py-2.5 rounded-full text-[11px] font-bold hover:bg-theme-navy/10 transition-colors"
+              className="flex items-center gap-1.5 bg-theme-navy/5 dark:bg-white/10 text-theme-navy dark:text-slate-200 px-4 py-2.5 rounded-full text-[11px] font-bold hover:bg-theme-navy/10 dark:hover:bg-white/15 transition-colors"
             >
               Quick View
             </button>
@@ -138,7 +155,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' 
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
-            className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]"
+            className="bg-theme-card border border-theme-border w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]"
           >
             <div className="absolute top-4 right-4 z-10 flex gap-2">
               <button
@@ -178,12 +195,12 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' 
               </p>
 
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <div className="text-xs text-slate-500 mb-1 flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> Duration</div>
+                <div className="bg-slate-50 dark:bg-theme-navy/20 p-4 rounded-xl border border-slate-100 dark:border-theme-border/40">
+                  <div className="text-xs text-slate-500 dark:text-theme-muted mb-1 flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 text-theme-gold" /> Duration</div>
                   <div className="text-sm font-bold text-theme-heading">{pkg.duration}</div>
                 </div>
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <div className="text-xs text-slate-500 mb-1 flex items-center gap-1.5"><Users className="h-3.5 w-3.5" /> Ideal For</div>
+                <div className="bg-slate-50 dark:bg-theme-navy/20 p-4 rounded-xl border border-slate-100 dark:border-theme-border/40">
+                  <div className="text-xs text-slate-500 dark:text-theme-muted mb-1 flex items-center gap-1.5"><Users className="h-3.5 w-3.5 text-theme-gold" /> Ideal For</div>
                   <div className="text-sm font-bold text-theme-heading">{pkg.bestFor}</div>
                 </div>
               </div>
@@ -191,7 +208,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' 
               {pkg.weatherInfo && (
                 <div className="bg-theme-navy/5 p-5 rounded-2xl border border-theme-border/50 mb-6">
                   <h4 className="text-sm font-bold text-theme-heading mb-4 flex items-center gap-2">
-                    <CloudSun className="h-4 w-4 text-theme-teal" /> 
+                    <CloudSun className="h-4 w-4 text-theme-teal dark:text-theme-gold" /> 
                     Weather Predictor & Tips
                   </h4>
                   <div className="space-y-3">
@@ -220,9 +237,9 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' 
                 </div>
               )}
 
-              <div className="flex items-center justify-between border-t border-slate-100 pt-6 mt-auto">
+              <div className="flex items-center justify-between border-t border-slate-100 dark:border-theme-border pt-6 mt-auto">
                 <div>
-                  <div className="text-xs text-slate-500 mb-1">Starting Price</div>
+                  <div className="text-xs text-slate-500 dark:text-theme-muted mb-1">Starting Price</div>
                   <div className="text-2xl font-bold text-[#E63946]">{displayPrice}</div>
                 </div>
                 <a

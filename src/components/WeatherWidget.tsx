@@ -155,7 +155,7 @@ export default function WeatherWidget() {
   };
 
   return (
-    <div className="bg-theme-card border border-theme-border rounded-3xl p-5 sm:p-6 shadow-sm relative overflow-hidden flex flex-col gap-4">
+    <div className="bg-theme-card border border-theme-border rounded-3xl p-5 sm:p-6 shadow-sm relative overflow-hidden flex flex-col gap-4 shrink-0">
       {/* Decorative Blur Backgrounds */}
       <div className="absolute top-[-10%] right-[-10%] w-40 h-40 bg-theme-teal/5 rounded-full blur-2xl pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-40 h-40 bg-theme-gold/5 rounded-full blur-2xl pointer-events-none" />
@@ -212,89 +212,101 @@ export default function WeatherWidget() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.25 }}
-          className="flex flex-col gap-4"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          {/* Main Panel */}
-          <div className="flex items-center justify-between gap-4 bg-gradient-to-r from-theme-navy/5 to-transparent p-4 rounded-2xl border border-theme-border/60">
-            <div className="flex items-center gap-3">
-              {getWeatherIcon(data.condition)}
-              <div>
-                <h5 className="font-serif font-bold text-theme-heading text-sm">{data.city}</h5>
-                <p className="text-[10px] text-theme-muted font-medium flex items-center gap-1">
-                  <Compass className="h-2.5 w-2.5 text-theme-gold" />
-                  {data.country} • {data.condition}
-                </p>
-              </div>
-            </div>
-            
-            <div className="text-right">
-              <div className="text-2xl font-bold font-serif text-theme-heading leading-none">
-                {data.temp}°C
-              </div>
-              <span className="text-[8px] text-theme-muted mt-1 inline-block bg-theme-navy/5 px-2 py-0.5 rounded-full font-medium">
-                Updated {lastUpdated}
-              </span>
-            </div>
-          </div>
-
-          {/* Micro stats table */}
-          <div className="grid grid-cols-3 gap-2">
-            <div className="bg-slate-50 border border-slate-100 p-2.5 rounded-xl text-center">
-              <Droplets className="h-3.5 w-3.5 text-theme-teal mx-auto mb-1" />
-              <div className="text-[8px] font-bold text-theme-muted uppercase tracking-wider">Humidity</div>
-              <div className="text-xs font-bold text-theme-heading mt-0.5">{data.humidity}%</div>
-            </div>
-            <div className="bg-slate-50 border border-slate-100 p-2.5 rounded-xl text-center">
-              <Wind className="h-3.5 w-3.5 text-theme-teal mx-auto mb-1" />
-              <div className="text-[8px] font-bold text-theme-muted uppercase tracking-wider">Wind</div>
-              <div className="text-xs font-bold text-theme-heading mt-0.5">{data.windSpeed} km/h</div>
-            </div>
-            <div className="bg-slate-50 border border-slate-100 p-2.5 rounded-xl text-center">
-              <Thermometer className="h-3.5 w-3.5 text-theme-teal mx-auto mb-1" />
-              <div className="text-[8px] font-bold text-theme-muted uppercase tracking-wider">UV Index</div>
-              <div className="text-xs font-bold text-theme-heading mt-0.5">{data.uvIndex}</div>
-            </div>
-          </div>
-
-          {/* Planning Advisor / Recommendation */}
-          <div className="bg-theme-navy/5 border border-theme-border/50 p-3.5 rounded-2xl flex flex-col gap-2">
-            <div className="flex items-start gap-2">
-              <Shirt className="h-3.5 w-3.5 text-theme-gold shrink-0 mt-0.5" />
-              <div>
-                <p className="text-[9px] uppercase font-bold text-theme-muted">What to Pack</p>
-                <p className="text-[10px] font-light text-theme-heading leading-relaxed mt-0.5">
-                  {data.clothingTip}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-2 border-t border-theme-border/50 pt-2">
-              <Info className="h-3.5 w-3.5 text-theme-teal shrink-0 mt-0.5" />
-              <div>
-                <p className="text-[9px] uppercase font-bold text-theme-muted">Sightseeing Advisor</p>
-                <p className="text-[10px] font-light text-theme-heading leading-relaxed mt-0.5">
-                  {data.advisory}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* 3-Day Forecast Strip */}
-          <div>
-            <p className="text-[9px] uppercase font-bold text-theme-muted tracking-wider mb-2 flex items-center gap-1">
-              <Calendar className="h-3 w-3 text-theme-gold" /> 3-Day Planning Forecast
-            </p>
-            <div className="flex flex-col gap-1.5">
-              {data.forecast.map((fc, i) => (
-                <div key={i} className="flex items-center justify-between bg-slate-50/50 hover:bg-slate-50 border border-slate-100 p-2 rounded-lg transition-colors">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-theme-heading w-8">{fc.day}</span>
-                    {getWeatherIcon(fc.condition, "h-4 w-4")}
-                    <span className="text-[10px] text-theme-muted font-light">{fc.condition}</span>
-                  </div>
-                  <span className="text-[10px] font-bold text-theme-heading">{fc.temp}</span>
+          {/* Left Column: Current Weather and Stats */}
+          <div className="flex flex-col gap-4">
+            {/* Main Panel */}
+            <div className="flex items-center justify-between gap-4 bg-gradient-to-r from-theme-navy/5 to-transparent p-4 rounded-2xl border border-theme-border/60">
+              <div className="flex items-center gap-3">
+                {getWeatherIcon(data.condition)}
+                <div>
+                  <h5 className="font-serif font-bold text-theme-heading text-sm">{data.city}</h5>
+                  <p className="text-[10px] text-theme-muted font-medium flex items-center gap-1">
+                    <Compass className="h-2.5 w-2.5 text-theme-gold" />
+                    {data.country} • {data.condition}
+                  </p>
                 </div>
-              ))}
+              </div>
+              
+              <div className="text-right">
+                <div className="text-2xl font-bold font-serif text-theme-heading leading-none">
+                  {data.temp}°C
+                </div>
+                <span className="text-[8px] text-theme-muted mt-1 inline-block bg-theme-navy/5 px-2 py-0.5 rounded-full font-medium">
+                  Updated {lastUpdated}
+                </span>
+              </div>
+            </div>
+
+            {/* Micro stats table */}
+            <div className="grid grid-cols-3 gap-2">
+              <div className="bg-slate-50 border border-slate-100 p-2.5 rounded-xl text-center">
+                <Droplets className="h-3.5 w-3.5 text-theme-teal mx-auto mb-1" />
+                <div className="text-[8px] font-bold text-theme-muted uppercase tracking-wider">Humidity</div>
+                <div className="text-xs font-bold text-theme-heading mt-0.5">{data.humidity}%</div>
+              </div>
+              <div className="bg-slate-50 border border-slate-100 p-2.5 rounded-xl text-center">
+                <Wind className="h-3.5 w-3.5 text-theme-teal mx-auto mb-1" />
+                <div className="text-[8px] font-bold text-theme-muted uppercase tracking-wider">Wind</div>
+                <div className="text-xs font-bold text-theme-heading mt-0.5">{data.windSpeed} km/h</div>
+              </div>
+              <div className="bg-slate-50 border border-slate-100 p-2.5 rounded-xl text-center">
+                <Thermometer className="h-3.5 w-3.5 text-theme-teal mx-auto mb-1" />
+                <div className="text-[8px] font-bold text-theme-muted uppercase tracking-wider">UV Index</div>
+                <div className="text-xs font-bold text-theme-heading mt-0.5">{data.uvIndex}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Recommendations & Forecast */}
+          <div className="flex flex-col gap-4">
+            {/* Planning Advisor / Recommendation */}
+            <div className="flex flex-col gap-3">
+              {/* What to Pack Card */}
+              <div className="bg-amber-50/65 dark:bg-amber-950/15 border border-amber-200/60 dark:border-amber-900/30 p-4 rounded-2xl flex items-start gap-3 shadow-sm hover:shadow-md transition-all">
+                <div className="p-2 bg-amber-100/70 dark:bg-amber-950/40 rounded-xl border border-amber-200/30">
+                  <Shirt className="h-4 w-4 text-amber-700 dark:text-theme-gold shrink-0" />
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-amber-800 dark:text-amber-400 tracking-wider">What to Pack</p>
+                  <p className="text-xs font-medium text-theme-heading leading-relaxed mt-1">
+                    {data.clothingTip}
+                  </p>
+                </div>
+              </div>
+
+              {/* Sightseeing Advisor Card */}
+              <div className="bg-blue-50/65 dark:bg-sky-950/15 border border-blue-200/60 dark:border-sky-900/30 p-4 rounded-2xl flex items-start gap-3 shadow-sm hover:shadow-md transition-all">
+                <div className="p-2 bg-blue-100/70 dark:bg-sky-950/40 rounded-xl border border-blue-200/30">
+                  <Info className="h-4 w-4 text-blue-700 dark:text-sky-400 shrink-0" />
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase font-bold text-blue-800 dark:text-sky-400 tracking-wider">Sightseeing Advisor</p>
+                  <p className="text-xs font-medium text-theme-heading leading-relaxed mt-1">
+                    {data.advisory}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* 3-Day Forecast Strip */}
+            <div>
+              <p className="text-[9px] uppercase font-bold text-theme-muted tracking-wider mb-2 flex items-center gap-1">
+                <Calendar className="h-3 w-3 text-theme-gold" /> 3-Day Planning Forecast
+              </p>
+              <div className="flex flex-col gap-1.5">
+                {data.forecast.map((fc, i) => (
+                  <div key={i} className="flex items-center justify-between bg-slate-50/50 hover:bg-slate-50 border border-slate-100 p-2 rounded-lg transition-colors">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-theme-heading w-8">{fc.day}</span>
+                      {getWeatherIcon(fc.condition, "h-4 w-4")}
+                      <span className="text-[10px] text-theme-muted font-light">{fc.condition}</span>
+                    </div>
+                    <span className="text-[10px] font-bold text-theme-heading">{fc.temp}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </motion.div>

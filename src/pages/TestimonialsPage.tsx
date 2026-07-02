@@ -69,7 +69,7 @@ export default function TestimonialsPage() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-16">
         
         {showForm && (
-          <div className="max-w-2xl mx-auto mb-16 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-theme-border">
+          <div className="max-w-2xl mx-auto mb-16 bg-theme-card p-6 sm:p-8 rounded-2xl shadow-sm border border-theme-border">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold font-serif text-theme-heading">Leave a Review</h3>
               <button 

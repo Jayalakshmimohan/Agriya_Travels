@@ -161,13 +161,20 @@ export default function AITripPlanner() {
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-slate-400 tracking-[0.1em] uppercase">Travel Type</label>
                   <select className="w-full bg-theme-teal/40 border border-theme-teal rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all" value={formData.travelType} onChange={(e) => setFormData({ ...formData, travelType: e.target.value })}>
-                    <option>Family</option><option>Honeymoon</option><option>Pilgrimage</option><option>Adventure</option><option>Corporate</option>
+                    <option className="bg-[#0B192C] text-white">Family</option>
+                    <option className="bg-[#0B192C] text-white">Honeymoon</option>
+                    <option className="bg-[#0B192C] text-white">Pilgrimage</option>
+                    <option className="bg-[#0B192C] text-white">Adventure</option>
+                    <option className="bg-[#0B192C] text-white">Corporate</option>
                   </select>
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-slate-400 tracking-[0.1em] uppercase">Budget</label>
                   <select className="w-full bg-theme-teal/40 border border-theme-teal rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all" value={formData.budget} onChange={(e) => setFormData({ ...formData, budget: e.target.value })}>
-                    <option>Budget-Friendly</option><option>Moderate</option><option>Premium</option><option>Luxury</option>
+                    <option className="bg-[#0B192C] text-white">Budget-Friendly</option>
+                    <option className="bg-[#0B192C] text-white">Moderate</option>
+                    <option className="bg-[#0B192C] text-white">Premium</option>
+                    <option className="bg-[#0B192C] text-white">Luxury</option>
                   </select>
                 </div>
               </div>
@@ -176,13 +183,20 @@ export default function AITripPlanner() {
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-slate-400 tracking-[0.1em] uppercase flex items-center gap-1.5"><Hotel className="w-3 h-3 text-theme-gold" /> Hotel</label>
                   <select className="w-full bg-theme-teal/40 border border-theme-teal rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all" value={formData.hotelPreference} onChange={(e) => setFormData({ ...formData, hotelPreference: e.target.value })}>
-                    <option>3-Star</option><option>4-Star</option><option>5-Star</option><option>Resort</option><option>Homestay</option>
+                    <option className="bg-[#0B192C] text-white">3-Star</option>
+                    <option className="bg-[#0B192C] text-white">4-Star</option>
+                    <option className="bg-[#0B192C] text-white">5-Star</option>
+                    <option className="bg-[#0B192C] text-white">Resort</option>
+                    <option className="bg-[#0B192C] text-white">Homestay</option>
                   </select>
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-slate-400 tracking-[0.1em] uppercase flex items-center gap-1.5"><Car className="w-3 h-3 text-theme-gold" /> Vehicle</label>
                   <select className="w-full bg-theme-teal/40 border border-theme-teal rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all" value={formData.vehicleRequirement} onChange={(e) => setFormData({ ...formData, vehicleRequirement: e.target.value })}>
-                    <option>Sedan</option><option>SUV</option><option>Tempo Traveller</option><option>Not Required</option>
+                    <option className="bg-[#0B192C] text-white">Sedan</option>
+                    <option className="bg-[#0B192C] text-white">SUV</option>
+                    <option className="bg-[#0B192C] text-white">Tempo Traveller</option>
+                    <option className="bg-[#0B192C] text-white">Not Required</option>
                   </select>
                 </div>
               </div>
@@ -250,7 +264,7 @@ export default function AITripPlanner() {
                    </div>
                    <div>
                      <p className="text-[9px] text-theme-muted uppercase tracking-widest font-bold mb-1">Duration</p>
-                     <p className="text-slate-800 font-bold text-sm block">{formData.days} Days / {Math.max(1, parseInt(formData.days)-1)} Nights</p>
+                     <p className="text-theme-heading font-bold text-sm block">{formData.days} Days / {Math.max(1, parseInt(formData.days)-1)} Nights</p>
                    </div>
                 </div>
 
@@ -274,7 +288,7 @@ export default function AITripPlanner() {
                           {it.day}
                         </div>
                         <div className="pt-0.5">
-                          <h5 className="text-xs font-bold text-slate-800">{it.title}</h5>
+                          <h5 className="text-xs font-bold text-theme-heading">{it.title}</h5>
                           <p className="text-[10px] text-theme-muted mt-1 font-light leading-relaxed">{it.desc}</p>
                         </div>
                       </div>

@@ -242,7 +242,7 @@ export default function InteractiveTravelMap() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
-              className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]"
+              className="bg-theme-card border border-theme-border w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden relative flex flex-col max-h-[90vh]"
             >
               <div className="absolute top-4 right-4 z-10 flex gap-2">
                 <button
@@ -282,14 +282,14 @@ export default function InteractiveTravelMap() {
                 </p>
 
                 <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <div className="text-xs text-slate-500 mb-1 flex items-center gap-1.5">
+                  <div className="bg-slate-50 dark:bg-theme-navy/20 p-4 rounded-xl border border-slate-100 dark:border-theme-border/40">
+                    <div className="text-xs text-slate-500 dark:text-theme-muted mb-1 flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5 text-theme-gold" /> Duration
                     </div>
                     <div className="text-sm font-bold text-theme-heading">{activePackage.duration}</div>
                   </div>
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <div className="text-xs text-slate-500 mb-1 flex items-center gap-1.5">
+                  <div className="bg-slate-50 dark:bg-theme-navy/20 p-4 rounded-xl border border-slate-100 dark:border-theme-border/40">
+                    <div className="text-xs text-slate-500 dark:text-theme-muted mb-1 flex items-center gap-1.5">
                       <Users className="h-3.5 w-3.5 text-theme-gold" /> Ideal For
                     </div>
                     <div className="text-sm font-bold text-theme-heading">{activePackage.bestFor}</div>
@@ -299,7 +299,7 @@ export default function InteractiveTravelMap() {
                 {activePackage.weatherInfo && (
                   <div className="bg-theme-navy/5 p-5 rounded-2xl border border-theme-border/50 mb-6">
                     <h4 className="text-sm font-bold text-theme-heading mb-4 flex items-center gap-2">
-                      <CloudSun className="h-4 w-4 text-theme-teal" /> 
+                      <CloudSun className="h-4 w-4 text-theme-teal dark:text-theme-gold" /> 
                       Weather Predictor & Tips
                     </h4>
                     <div className="space-y-3">
@@ -328,9 +328,9 @@ export default function InteractiveTravelMap() {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between border-t border-slate-100 pt-6 mt-auto">
+                <div className="flex items-center justify-between border-t border-slate-100 dark:border-theme-border pt-6 mt-auto">
                   <div>
-                    <div className="text-xs text-slate-500 mb-1">Starting Price</div>
+                    <div className="text-xs text-slate-500 dark:text-theme-muted mb-1">Starting Price</div>
                     <div className="text-2xl font-bold text-[#E63946]">{getPrice(activePackage.startingPrice)}</div>
                   </div>
                   <a

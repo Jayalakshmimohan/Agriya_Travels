@@ -45,8 +45,8 @@ export default function PackagesPage({ filterCategory, title, description }: Pac
           </div>
         ) : (
           <div className="text-center py-20">
-            <h3 className="text-xl font-medium text-gray-900">More packages coming soon!</h3>
-            <p className="mt-2 text-gray-500">Contact us on WhatsApp for custom itineraries.</p>
+            <h3 className="text-xl font-medium text-theme-heading">More packages coming soon!</h3>
+            <p className="mt-2 text-theme-muted">Contact us on WhatsApp for custom itineraries.</p>
           </div>
         )}
       </div>
