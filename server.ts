@@ -3,6 +3,9 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import compression from "compression";
 
 dotenv.config();
 
@@ -18,6 +21,42 @@ const ai = new GoogleGenAI({
 async function startServer() {
   const app = express();
   const PORT = 3000;
+
+  // Trust proxy for reverse proxy environments like Cloud Run (required for express-rate-limit)
+  app.set("trust proxy", 1);
+
+  // Mask express header to prevent finger-printing (OWASP A05: Security Misconfiguration)
+  app.disable("x-powered-by");
+
+  // Gzip compression for static files and api responses (Performance Improvement)
+  app.use(compression());
+
+  // Setup security headers with helmet (OWASP A05: Security Misconfiguration)
+  // Adjusted for compatibility with the AI Studio iframe preview environment
+  app.use(
+    helmet({
+      contentSecurityPolicy: false, // Disable CSP to prevent blocking framing or assets in sandboxed preview iframe
+      frameguard: false,           // Disable X-Frame-Options to allow framing inside AI Studio preview
+      crossOriginEmbedderPolicy: false,
+      crossOriginResourcePolicy: false,
+      crossOriginOpenerPolicy: false,
+    })
+  );
+
+  // Rate Limiting to prevent DoS attacks and resource abuse (OWASP A04: Insecure Design & A05: Security Misconfiguration)
+  const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 100, // Limit each IP to 100 requests per 15 minutes
+    standardHeaders: "draft-7", // Return rate limit info in standard headers
+    legacyHeaders: false, // Disable the deprecated X-RateLimit-* headers
+    message: {
+      success: false,
+      message: "Too many requests from this IP, please try again later."
+    }
+  });
+
+  // Apply rate limiting to all api endpoints
+  app.use("/api/", apiLimiter);
 
   app.use(express.json());
 
@@ -167,6 +206,15 @@ async function startServer() {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
+
+  // Global error handling middleware to prevent sensitive information disclosure (OWASP A05)
+  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error("Unhandled server error:", err);
+    res.status(500).json({
+      success: false,
+      message: "An internal server error occurred. Please try again later."
+    });
+  });
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);

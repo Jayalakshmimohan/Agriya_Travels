@@ -20,7 +20,56 @@ export default function AITripPlanner() {
     specialNeeds: ''
   });
 
+  const [errors, setErrors] = useState({
+    destination: '',
+    startingCity: '',
+    days: '',
+    travellers: '',
+  });
+
   const [isGenerating, setIsGenerating] = useState(false);
+
+  const validateField = (name: string, value: string) => {
+    let error = '';
+    if (name === 'destination') {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        error = 'Destination is required';
+      } else if (trimmed.length > 100) {
+        error = 'Max 100 characters';
+      } else if (!/^[a-zA-Z0-9\s,.'()-]+$/.test(trimmed)) {
+        error = 'Invalid characters';
+      }
+    }
+    if (name === 'startingCity') {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        error = 'Start city is required';
+      } else if (trimmed.length > 100) {
+        error = 'Max 100 characters';
+      } else if (!/^[a-zA-Z0-9\s,.'()-]+$/.test(trimmed)) {
+        error = 'Invalid characters';
+      }
+    }
+    if (name === 'days') {
+      const num = parseInt(value, 10);
+      if (!value) {
+        error = 'Required';
+      } else if (isNaN(num) || num < 1 || num > 30) {
+        error = 'Must be 1 to 30 days';
+      }
+    }
+    if (name === 'travellers') {
+      const num = parseInt(value, 10);
+      if (!value) {
+        error = 'Required';
+      } else if (isNaN(num) || num < 1 || num > 500) {
+        error = 'Must be 1 to 500';
+      }
+    }
+    setErrors(prev => ({ ...prev, [name]: error }));
+    return error;
+  };
   const [result, setResult] = useState<any | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const itineraryRef = useRef<HTMLDivElement>(null);
@@ -61,6 +110,16 @@ export default function AITripPlanner() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const destErr = validateField('destination', formData.destination);
+    const startErr = validateField('startingCity', formData.startingCity);
+    const daysErr = validateField('days', formData.days);
+    const travellersErr = validateField('travellers', formData.travellers);
+
+    if (destErr || startErr || daysErr || travellersErr) {
+      return;
+    }
+
     setIsGenerating(true);
     setResult(null);
 
@@ -134,26 +193,99 @@ export default function AITripPlanner() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-slate-400 tracking-[0.1em] uppercase flex items-center gap-1.5"><MapPin className="w-3 h-3 text-theme-gold" /> Destination</label>
-                  <input type="text" required placeholder="e.g. Kerala, Dubai" className="w-full bg-theme-teal/40 border border-theme-teal rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all" value={formData.destination} onChange={(e) => setFormData({ ...formData, destination: e.target.value })} />
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Kerala, Dubai"
+                    className={`w-full bg-theme-teal/40 border rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all ${
+                      errors.destination ? 'border-red-500' : 'border-theme-teal'
+                    }`}
+                    value={formData.destination}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setFormData({ ...formData, destination: val });
+                      validateField('destination', val);
+                    }}
+                  />
+                  {errors.destination && (
+                    <p className="text-[10px] text-red-300 font-medium">⚠️ {errors.destination}</p>
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-slate-400 tracking-[0.1em] uppercase flex items-center gap-1.5"><MapPin className="w-3 h-3 text-theme-gold" /> Start City</label>
-                  <input type="text" required placeholder="e.g. Chennai" className="w-full bg-theme-teal/40 border border-theme-teal rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all" value={formData.startingCity} onChange={(e) => setFormData({ ...formData, startingCity: e.target.value })} />
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Chennai"
+                    className={`w-full bg-theme-teal/40 border rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all ${
+                      errors.startingCity ? 'border-red-500' : 'border-theme-teal'
+                    }`}
+                    value={formData.startingCity}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setFormData({ ...formData, startingCity: val });
+                      validateField('startingCity', val);
+                    }}
+                  />
+                  {errors.startingCity && (
+                    <p className="text-[10px] text-red-300 font-medium">⚠️ {errors.startingCity}</p>
+                  )}
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1.5 col-span-3 sm:col-span-1">
                   <label className="text-[10px] font-bold text-slate-400 tracking-[0.1em] uppercase flex items-center gap-1.5"><Calendar className="w-3 h-3 text-theme-gold" /> Month/Date</label>
-                  <input type="text" placeholder="e.g. Nov 2024" className="w-full bg-theme-teal/40 border border-theme-teal rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all" value={formData.travelDate} onChange={(e) => setFormData({ ...formData, travelDate: e.target.value })} />
+                  <input
+                    type="text"
+                    placeholder="e.g. Nov 2024"
+                    className="w-full bg-theme-teal/40 border border-theme-teal rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all"
+                    value={formData.travelDate}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[<>]/g, '');
+                      setFormData({ ...formData, travelDate: val });
+                    }}
+                  />
                 </div>
                 <div className="space-y-1.5 col-span-1">
                   <label className="text-[10px] font-bold text-slate-400 tracking-[0.1em] uppercase">Days</label>
-                  <input type="number" min="1" required className="w-full bg-theme-teal/40 border border-theme-teal rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all text-center" value={formData.days} onChange={(e) => setFormData({ ...formData, days: e.target.value })} />
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    className={`w-full bg-theme-teal/40 border rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all text-center ${
+                      errors.days ? 'border-red-500' : 'border-theme-teal'
+                    }`}
+                    value={formData.days}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '');
+                      setFormData({ ...formData, days: val });
+                      validateField('days', val);
+                    }}
+                  />
+                  {errors.days && (
+                    <p className="text-[10px] text-red-300 font-medium">⚠️ {errors.days}</p>
+                  )}
                 </div>
                 <div className="space-y-1.5 col-span-2 sm:col-span-1">
                   <label className="text-[10px] font-bold text-slate-400 tracking-[0.1em] uppercase flex items-center gap-1.5"><Users className="w-3 h-3 text-theme-gold" /> Travellers</label>
-                  <input type="number" min="1" required className="w-full bg-theme-teal/40 border border-theme-teal rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all text-center" value={formData.travellers} onChange={(e) => setFormData({ ...formData, travellers: e.target.value })} />
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    className={`w-full bg-theme-teal/40 border rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-theme-gold transition-all text-center ${
+                      errors.travellers ? 'border-red-500' : 'border-theme-teal'
+                    }`}
+                    value={formData.travellers}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '');
+                      setFormData({ ...formData, travellers: val });
+                      validateField('travellers', val);
+                    }}
+                  />
+                  {errors.travellers && (
+                    <p className="text-[10px] text-red-300 font-medium">⚠️ {errors.travellers}</p>
+                  )}
                 </div>
               </div>
 
