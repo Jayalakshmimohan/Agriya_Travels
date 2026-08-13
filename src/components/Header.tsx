@@ -68,15 +68,19 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-40 w-full bg-theme-card border-b border-theme-border shrink-0 transition-all">
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 sm:px-8">
-        <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
-          <div className="flex w-8 h-8 sm:w-10 sm:h-10 items-center justify-center rounded-lg bg-theme-navy text-theme-gold font-serif font-bold text-lg sm:text-xl">
-            A
-          </div>
+        <Link to="/" className="flex items-center gap-2.5 sm:gap-3 transition-opacity hover:opacity-90">
+          <img
+            src="/logo.png"
+            alt="Agriya Travels"
+            className="h-9 w-9 sm:h-11 sm:w-11 object-contain rounded-xl bg-white p-0.5 shadow-sm border border-theme-border/40 shrink-0"
+          />
           <div>
             <span className="block text-lg sm:text-xl font-bold tracking-tight text-theme-heading leading-none font-serif">
               Agriya<span className="text-theme-gold italic">Travels</span>
             </span>
-            <p className="text-[8px] sm:text-[10px] uppercase tracking-widest text-slate-400 font-semibold mt-0.5 hidden sm:block">Excellence in Journeys</p>
+            <p className="text-[8px] sm:text-[9px] uppercase tracking-widest text-slate-400 font-semibold mt-0.5 hidden sm:block">
+              Journeys • Memories • Trust
+            </p>
           </div>
         </Link>
 

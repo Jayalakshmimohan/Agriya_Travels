@@ -11,12 +11,14 @@ interface SEOProps {
 
 export default function SEO({ title, description, keywords, image, url }: SEOProps) {
   const siteTitle = `${title} | Agriya Travels`;
-  const defaultImage = 'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?auto=format&fit=crop&q=80&w=1200'; // Generic travel hero
+  const defaultImage = '/logo.png';
   
   return (
     <Helmet>
       {/* Standard metadata */}
       <title>{siteTitle}</title>
+      <link rel="icon" type="image/png" href="/logo.png" />
+      <link rel="apple-touch-icon" href="/logo.png" />
       <meta name="description" content={description} />
       {keywords && <meta name="keywords" content={keywords} />}
 

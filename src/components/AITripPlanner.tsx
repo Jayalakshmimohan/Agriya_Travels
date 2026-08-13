@@ -383,6 +383,23 @@ export default function AITripPlanner() {
                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                   <Compass className="h-32 w-32" />
                 </div>
+
+                <div className="flex items-center justify-between border-b border-theme-border/60 pb-4 mb-5">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src="/logo.png"
+                      alt="Agriya Travels"
+                      className="h-10 w-10 object-contain rounded-xl bg-white p-1 shadow-xs border border-theme-border/40 shrink-0"
+                    />
+                    <div>
+                      <h5 className="font-serif font-bold text-sm text-theme-heading leading-none">Agriya Travels</h5>
+                      <p className="text-[9px] uppercase tracking-widest text-slate-400 font-semibold mt-1">Journeys • Memories • Trust</p>
+                    </div>
+                  </div>
+                  <div className="bg-[#F1FAEE] text-theme-teal px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">
+                    Official Plan
+                  </div>
+                </div>
                 
                 <h4 className="text-xl font-bold font-serif leading-tight mb-2 pr-8">{result?.title}</h4>
                 <div className="inline-block bg-[#F1FAEE] text-theme-teal px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider mb-6">

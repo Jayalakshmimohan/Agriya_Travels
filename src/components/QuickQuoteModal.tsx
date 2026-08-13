@@ -136,7 +136,17 @@ export default function QuickQuoteModal() {
               className="fixed bottom-0 left-0 right-0 z-[70] m-4 sm:bottom-20 sm:left-4 sm:right-auto sm:m-0 sm:w-80 rounded-2xl bg-theme-card p-6 shadow-2xl border border-theme-border/60"
             >
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-bold text-theme-heading font-serif">Quick Quote</h3>
+                <div className="flex items-center gap-2.5">
+                  <img
+                    src="/logo.png"
+                    alt="Agriya Travels"
+                    className="h-8 w-8 object-contain rounded-lg bg-white p-0.5 shadow-xs border border-theme-border/40 shrink-0"
+                  />
+                  <div>
+                    <h3 className="text-base font-bold text-theme-heading font-serif leading-tight">Quick Quote</h3>
+                    <p className="text-[10px] text-theme-muted">Agriya Travels</p>
+                  </div>
+                </div>
                 <button
                   onClick={() => {
                     setIsOpen(false);

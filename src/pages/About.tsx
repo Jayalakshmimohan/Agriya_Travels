@@ -68,24 +68,46 @@ export default function About() {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 relative">
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-theme-gold rounded-full blur-3xl opacity-20 pointer-events-none" />
-             <div className="space-y-4 sm:space-y-6 mt-12 sm:mt-24">
-               <img
-                src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&q=80&w=800"
-                alt="India Travel"
-                className="rounded-[2rem] shadow-xl h-64 sm:h-80 w-full object-cover"
-                referrerPolicy="no-referrer"
-               />
-             </div>
-             <div className="space-y-4 sm:space-y-6">
-               <img
-                src="https://images.unsplash.com/photo-1522199710521-72d69614c702?auto=format&fit=crop&q=80&w=800"
-                alt="Planning"
-                className="rounded-[2rem] shadow-xl h-64 sm:h-80 w-full object-cover"
-                referrerPolicy="no-referrer"
-               />
-             </div>
+          <div className="flex flex-col gap-6">
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 relative">
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-theme-gold rounded-full blur-3xl opacity-20 pointer-events-none" />
+               <div className="space-y-4 sm:space-y-6 mt-6 sm:mt-12">
+                 <img
+                  src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&q=80&w=800"
+                  alt="India Travel"
+                  className="rounded-[2rem] shadow-xl h-64 sm:h-80 w-full object-cover"
+                  referrerPolicy="no-referrer"
+                 />
+               </div>
+               <div className="space-y-4 sm:space-y-6">
+                 <img
+                  src="https://images.unsplash.com/photo-1522199710521-72d69614c702?auto=format&fit=crop&q=80&w=800"
+                  alt="Planning"
+                  className="rounded-[2rem] shadow-xl h-64 sm:h-80 w-full object-cover"
+                  referrerPolicy="no-referrer"
+                 />
+               </div>
+            </div>
+
+            {/* Official Brand Badge */}
+            <div className="bg-theme-card p-5 sm:p-6 rounded-3xl border border-theme-border shadow-lg flex items-center gap-5">
+              <img
+                src="/logo.png"
+                alt="Agriya Travels Official Brand"
+                className="h-16 w-16 sm:h-20 sm:w-20 object-contain rounded-2xl bg-white p-1.5 shadow-md border border-slate-100 dark:border-slate-800 shrink-0"
+              />
+              <div>
+                <span className="text-[10px] sm:text-xs font-bold text-theme-gold uppercase tracking-widest block mb-0.5">
+                  Official Brand & Identity
+                </span>
+                <h4 className="font-serif font-bold text-theme-heading text-base sm:text-lg leading-tight">
+                  Agriya Travels Chennai
+                </h4>
+                <p className="text-xs sm:text-sm text-theme-muted font-light mt-1">
+                  Journeys • Memories • Trust — Dedicated to curating unforgettable travel memories across India and worldwide.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

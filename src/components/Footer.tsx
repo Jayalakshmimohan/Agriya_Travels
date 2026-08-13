@@ -11,14 +11,19 @@ export default function Footer() {
       <div className="mx-auto max-w-[1400px] px-4 py-10 sm:px-8 relative z-10">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-6 xl:col-span-1">
-             <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
-              <div className="flex w-8 h-8 items-center justify-center rounded-lg bg-theme-navy text-theme-gold font-serif font-bold text-lg">
-                A
-              </div>
+             <Link to="/" className="flex items-center gap-3 transition-opacity hover:opacity-90">
+              <img
+                src="/logo.png"
+                alt="Agriya Travels"
+                className="h-11 w-11 object-contain rounded-xl bg-white p-1 shadow-sm border border-theme-border/40 shrink-0"
+              />
               <div>
-                <span className="block text-lg font-bold tracking-tight text-theme-heading leading-none font-serif">
+                <span className="block text-xl font-bold tracking-tight text-theme-heading leading-none font-serif">
                   Agriya<span className="text-theme-gold italic">Travels</span>
                 </span>
+                <p className="text-[9px] uppercase tracking-widest text-slate-400 font-semibold mt-1">
+                  Journeys • Memories • Trust
+                </p>
               </div>
             </Link>
             <p className="text-[11px] leading-relaxed text-theme-muted max-w-sm font-light">

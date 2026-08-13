@@ -39,8 +39,20 @@ export default function ContactPage({ title = "Contact Us", focus = 'general' }:
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-3 gap-16">
           <div className="lg:col-span-1 space-y-8">
-            <div>
-              <h3 className="text-xl font-bold font-serif text-theme-heading mb-6">Get in Touch</h3>
+            <div className="bg-theme-card p-6 sm:p-7 rounded-3xl border border-theme-border shadow-sm">
+              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-theme-border">
+                <img
+                  src="/logo.png"
+                  alt="Agriya Travels"
+                  className="h-14 w-14 object-contain rounded-2xl bg-white p-1 shadow-sm border border-theme-border/40 shrink-0"
+                />
+                <div>
+                  <h3 className="text-xl font-bold font-serif text-theme-heading leading-tight">Agriya Travels</h3>
+                  <p className="text-[11px] text-theme-muted font-light mt-0.5">Journeys • Memories • Trust</p>
+                  <p className="text-[10px] text-theme-gold font-bold uppercase tracking-wider mt-1">Chennai, Tamil Nadu</p>
+                </div>
+              </div>
+              <h4 className="text-xs font-bold font-serif uppercase tracking-widest text-slate-400 mb-6">Headquarters & Support</h4>
               <ul className="space-y-6">
                 <li className="flex gap-4 items-start">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-theme-navy/5 text-theme-gold">
