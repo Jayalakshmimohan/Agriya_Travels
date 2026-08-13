@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
@@ -17,6 +18,22 @@ const ai = new GoogleGenAI({
     }
   }
 });
+
+const MPA_PAGE_MAP: Record<string, string> = {
+  '/': 'index.html',
+  '/about': 'about/index.html',
+  '/india-tours': 'india-tours/index.html',
+  '/international-tours': 'international-tours/index.html',
+  '/theme-tours': 'theme-tours/index.html',
+  '/rentals': 'rentals/index.html',
+  '/corporate': 'corporate/index.html',
+  '/gallery': 'gallery/index.html',
+  '/testimonials': 'testimonials/index.html',
+  '/ai-planner': 'ai-planner/index.html',
+  '/contact': 'contact/index.html',
+  '/404': '404.html',
+  '/404.html': '404.html',
+};
 
 async function startServer() {
   const app = express();
@@ -135,7 +152,6 @@ async function startServer() {
       // Extract grounded links if available to attach to items
       const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
       if (groundingChunks && groundingChunks.length > 0) {
-        // Map any available urls to our items as sources
         newsItems = newsItems.map((item: any, index: number) => {
           const chunk = groundingChunks[index % groundingChunks.length];
           if (chunk?.web?.uri) {
@@ -192,18 +208,95 @@ async function startServer() {
     }
   });
 
-  // Vite middleware for development
+  // Catch-all 404 handler for API routes
+  app.all('/api/*', (req, res) => {
+    res.status(404).json({ success: false, message: 'API endpoint not found' });
+  });
+
+  // Multi-Page Application (MPA) Routing
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: "spa",
+      appType: "custom",
     });
+
+    // Handle known MPA HTML routes BEFORE vite middleware
+    app.use(async (req, res, next) => {
+      // Pass static assets and vite internal requests directly to vite
+      if (
+        req.path.startsWith('/@') || 
+        req.path.startsWith('/src/') ||
+        req.path.startsWith('/node_modules/') ||
+        req.path.includes('.')
+      ) {
+        return next();
+      }
+
+      const cleanPath = req.path.replace(/\/$/, '') || '/';
+      const matchedPage = MPA_PAGE_MAP[cleanPath];
+
+      if (matchedPage) {
+        try {
+          const filePath = path.resolve(process.cwd(), matchedPage);
+          if (fs.existsSync(filePath)) {
+            let template = await fs.promises.readFile(filePath, 'utf-8');
+            template = await vite.transformIndexHtml(req.originalUrl, template);
+            return res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+          }
+        } catch (e) {
+          return next(e);
+        }
+      }
+
+      next();
+    });
+
+    // Vite internal middleware for modules, CSS, HMR, assets
     app.use(vite.middlewares);
+
+    // Development 404 handler for any unhandled routes
+    app.use(async (req, res, next) => {
+      // Don't intercept static assets or vite requests that errored
+      if (req.path.startsWith('/@') || req.path.startsWith('/src/') || req.path.includes('.')) {
+        return next();
+      }
+
+      try {
+        const notFoundPath = path.resolve(process.cwd(), '404.html');
+        if (fs.existsSync(notFoundPath)) {
+          let template = await fs.promises.readFile(notFoundPath, 'utf-8');
+          template = await vite.transformIndexHtml(req.originalUrl, template);
+          return res.status(404).set({ 'Content-Type': 'text/html' }).end(template);
+        }
+      } catch (e) {
+        console.error("Error serving dev 404:", e);
+      }
+
+      res.status(404).send("404 Not Found");
+    });
   } else {
+    // Production MPA Static File & Route Serving
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
+
     app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+      const cleanPath = req.path.replace(/\/$/, '') || '/';
+      const matchedPage = MPA_PAGE_MAP[cleanPath];
+
+      if (matchedPage) {
+        const filePath = path.join(distPath, matchedPage);
+        if (fs.existsSync(filePath)) {
+          return res.sendFile(filePath);
+        }
+      }
+
+      // 404 Not Found response
+      const notFoundPath = path.join(distPath, '404.html');
+      if (fs.existsSync(notFoundPath)) {
+        return res.status(404).sendFile(notFoundPath);
+      }
+
+      res.status(404).send("404 Not Found");
     });
   }
 

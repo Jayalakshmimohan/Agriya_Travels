@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Plane, Phone, ChevronDown, Moon, Sun, Search, MapPin } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { WHATSAPP_NUMBER, tourPackages } from '../data';
@@ -29,13 +28,23 @@ export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPath, setCurrentPath] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const location = useLocation();
   const { currency, setCurrency } = useCurrency();
 
   const [isDark, setIsDark] = useState(() => {
-    return document.documentElement.classList.contains('dark');
+    if (typeof document !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return false;
   });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.replace(/\/$/, '') || '/';
+      setCurrentPath(path);
+    }
+  }, []);
 
   useEffect(() => {
     if (isSearchOpen && searchInputRef.current) {
@@ -54,21 +63,30 @@ export default function Header() {
   );
 
   useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    if (typeof document !== 'undefined') {
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     }
   }, [isDark]);
 
   const toggleTheme = () => setIsDark(!isDark);
+
+  const isLinkActive = (path: string) => {
+    if (path === '/') {
+      return currentPath === '/' || currentPath === '';
+    }
+    return currentPath === path || currentPath.startsWith(path);
+  };
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi Agriya Travels, I want to plan a trip.')}`;
 
   return (
     <header className="sticky top-0 z-40 w-full bg-theme-card border-b border-theme-border shrink-0 transition-all">
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 sm:px-8">
-        <Link to="/" className="flex items-center gap-2.5 sm:gap-3 transition-opacity hover:opacity-90">
+        <a href="/" className="flex items-center gap-2.5 sm:gap-3 transition-opacity hover:opacity-90">
           <img
             src="/logo.png"
             alt="Agriya Travels"
@@ -82,7 +100,7 @@ export default function Header() {
               Journeys • Memories • Trust
             </p>
           </div>
-        </Link>
+        </a>
 
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-6 lg:flex text-[13px]">
@@ -101,29 +119,34 @@ export default function Header() {
                     <div className="absolute left-0 top-full pt-4 w-56 z-50">
                       <div className="rounded-2xl border border-theme-border bg-theme-card p-2 shadow-xl">
                         {DROPDOWN_LINKS.map((dropLink) => (
-                          <Link
+                          <a
                             key={dropLink.name}
-                            to={dropLink.path}
-                            className="block rounded-xl px-4 py-3 text-xs font-bold text-theme-muted hover:bg-theme-navy/5 hover:text-theme-heading"
+                            href={dropLink.path}
+                            className={cn(
+                              "block rounded-xl px-4 py-3 text-xs font-bold transition-colors",
+                              isLinkActive(dropLink.path)
+                                ? "bg-theme-navy/10 text-theme-gold"
+                                : "text-theme-muted hover:bg-theme-navy/5 hover:text-theme-heading"
+                            )}
                             onClick={() => setIsDropdownOpen(false)}
                           >
                             {dropLink.name}
-                          </Link>
+                          </a>
                         ))}
                       </div>
                     </div>
                   )}
                 </button>
               ) : (
-                <Link
-                  to={link.path}
+                <a
+                  href={link.path}
                   className={cn(
                     "font-bold transition-colors hover:text-theme-heading",
-                    location.pathname === link.path ? "text-theme-heading" : "text-theme-muted"
+                    isLinkActive(link.path) ? "text-theme-heading border-b-2 border-theme-gold pb-0.5" : "text-theme-muted"
                   )}
                 >
                   {link.name}
-                </Link>
+                </a>
               )}
             </div>
           ))}
@@ -132,14 +155,14 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-4">
           <button 
             onClick={() => setIsSearchOpen(true)} 
-            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors"
+            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors cursor-pointer"
             aria-label="Search Packages"
           >
             <Search className="h-5 w-5" />
           </button>
           
           <div className="relative group">
-            <button className="flex items-center gap-1 text-xs font-bold text-theme-muted hover:text-theme-heading transition-colors">
+            <button className="flex items-center gap-1 text-xs font-bold text-theme-muted hover:text-theme-heading transition-colors cursor-pointer">
               {currency} <ChevronDown className="h-3 w-3" />
             </button>
             <div className="absolute top-full left-0 pt-2 hidden group-hover:block z-50">
@@ -148,7 +171,7 @@ export default function Header() {
                   <button
                     key={cur}
                     onClick={() => setCurrency(cur)}
-                    className={cn("px-3 py-1.5 text-left text-xs font-bold rounded-lg transition-colors", currency === cur ? "bg-theme-navy/5 text-theme-heading" : "text-theme-muted hover:bg-theme-navy/5 hover:text-theme-heading")}
+                    className={cn("px-3 py-1.5 text-left text-xs font-bold rounded-lg transition-colors cursor-pointer", currency === cur ? "bg-theme-navy/5 text-theme-heading" : "text-theme-muted hover:bg-theme-navy/5 hover:text-theme-heading")}
                   >
                     {cur}
                   </button>
@@ -159,7 +182,7 @@ export default function Header() {
 
           <button 
             onClick={toggleTheme} 
-            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors"
+            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors cursor-pointer"
             aria-label="Toggle Theme"
           >
             {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
@@ -180,7 +203,7 @@ export default function Header() {
         <div className="flex items-center gap-1 sm:gap-2 lg:hidden">
           <button 
             onClick={() => setIsSearchOpen(true)} 
-            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors"
+            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors cursor-pointer"
             aria-label="Search Packages"
           >
             <Search className="h-5 w-5" />
@@ -189,7 +212,7 @@ export default function Header() {
           <select 
             value={currency} 
             onChange={(e) => setCurrency(e.target.value as any)}
-            className="bg-transparent text-xs font-bold text-theme-muted border-none outline-none focus:ring-0 mr-1 hidden sm:block"
+            className="bg-transparent text-xs font-bold text-theme-muted border-none outline-none focus:ring-0 mr-1 hidden sm:block cursor-pointer"
           >
             <option value="INR">INR</option>
             <option value="USD">USD</option>
@@ -198,14 +221,14 @@ export default function Header() {
           
           <button 
             onClick={toggleTheme} 
-            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors"
+            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors cursor-pointer"
             aria-label="Toggle Theme"
           >
             {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
           
           <button
-            className="flex items-center justify-center rounded-md p-2 text-theme-muted hover:bg-theme-border focus:outline-none"
+            className="flex items-center justify-center rounded-md p-2 text-theme-muted hover:bg-theme-border focus:outline-none cursor-pointer"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -218,32 +241,33 @@ export default function Header() {
         <div className="border-b border-theme-border bg-theme-card lg:hidden">
           <nav className="flex flex-col space-y-2 px-4 pb-6 pt-4">
             {NAV_LINKS.filter(l => !l.hasDropdown).map((link) => (
-              <Link
+              <a
                 key={link.name}
-                to={link.path}
+                href={link.path}
                 className={cn(
-                  "block rounded-xl px-4 py-3 text-sm font-bold",
-                  location.pathname === link.path ? "bg-theme-navy/5 text-theme-heading" : "text-theme-muted hover:bg-theme-card"
+                  "block rounded-xl px-4 py-3 text-sm font-bold transition-colors",
+                  isLinkActive(link.path) ? "bg-theme-navy/5 text-theme-heading" : "text-theme-muted hover:bg-theme-card"
                 )}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {link.name}
-              </Link>
+              </a>
             ))}
             <div className="pt-2 pb-1 pl-4 text-[10px] font-bold uppercase tracking-wider text-slate-400">
               More
             </div>
             {DROPDOWN_LINKS.map((link) => (
-               <Link
-               key={link.name}
-               to={link.path}
-               className={cn(
-                 "block rounded-xl px-4 py-3 text-sm font-bold text-theme-muted hover:bg-theme-card"
-               )}
-               onClick={() => setIsMobileMenuOpen(false)}
-             >
-               {link.name}
-             </Link>
+               <a
+                key={link.name}
+                href={link.path}
+                className={cn(
+                  "block rounded-xl px-4 py-3 text-sm font-bold transition-colors",
+                  isLinkActive(link.path) ? "bg-theme-navy/5 text-theme-gold" : "text-theme-muted hover:bg-theme-card"
+                )}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {link.name}
+              </a>
             ))}
             <a
               href={whatsappUrl}
@@ -280,7 +304,7 @@ export default function Header() {
               />
               <button
                 onClick={() => setIsSearchOpen(false)}
-                className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors ml-4"
+                className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors ml-4 cursor-pointer"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -295,9 +319,9 @@ export default function Header() {
               ) : searchResults.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {searchResults.map((pkg) => (
-                    <Link
+                    <a
                       key={pkg.id}
-                      to={`/${pkg.category === 'India' ? 'india-tours' : pkg.category === 'International' ? 'international-tours' : 'theme-tours'}?package=${pkg.id}`}
+                      href={`/${pkg.category === 'India' ? 'india-tours' : pkg.category === 'International' ? 'international-tours' : 'theme-tours'}?package=${pkg.id}`}
                       className="group flex flex-col bg-theme-navy/5 rounded-2xl overflow-hidden hover:shadow-md transition-all border border-theme-border/50"
                       onClick={() => setIsSearchOpen(false)}
                     >
@@ -316,7 +340,7 @@ export default function Header() {
                         <h4 className="font-bold text-theme-heading text-sm mb-2 line-clamp-1">{pkg.title}</h4>
                         <p className="text-xs text-theme-muted line-clamp-2 mt-auto">{pkg.description}</p>
                       </div>
-                    </Link>
+                    </a>
                   ))}
                 </div>
               ) : (
@@ -325,7 +349,7 @@ export default function Header() {
                   <p className="text-lg">No packages found for "{searchQuery}"</p>
                   <button 
                     onClick={() => setSearchQuery('')}
-                    className="mt-4 text-theme-gold font-bold hover:underline"
+                    className="mt-4 text-theme-gold font-bold hover:underline cursor-pointer"
                   >
                     Clear Search
                   </button>

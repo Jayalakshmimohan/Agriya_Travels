@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { Phone, Map } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '../data';
 import { motion, AnimatePresence } from 'motion/react';
@@ -85,13 +84,13 @@ export default function Hero() {
             <Phone className="h-4 w-4" />
             PLAN ON WHATSAPP
           </a>
-          <Link
-            to="/india-tours"
+          <a
+            href="/india-tours"
             className="flex items-center gap-2 border border-theme-gold/30 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-xs font-bold backdrop-blur-md hover:bg-theme-card/10 transition-all duration-300"
           >
             <Map className="h-4 w-4" />
             Explore Destinations
-          </Link>
+          </a>
         </motion.div>
       </div>
     </div>

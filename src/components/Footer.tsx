@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { Plane, MapPin, Phone, Mail, Instagram, Facebook, Twitter } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '../data';
 
@@ -11,32 +10,32 @@ export default function Footer() {
       <div className="mx-auto max-w-[1400px] px-4 py-10 sm:px-8 relative z-10">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-6 xl:col-span-1">
-             <Link to="/" className="flex items-center gap-3 transition-opacity hover:opacity-90">
+             <a href="/" className="flex items-center gap-4 transition-opacity hover:opacity-90">
               <img
                 src="/logo.png"
                 alt="Agriya Travels"
-                className="h-11 w-11 object-contain rounded-xl bg-white p-1 shadow-sm border border-theme-border/40 shrink-0"
+                className="h-20 w-20 sm:h-22 sm:w-22 object-contain rounded-2xl bg-white p-2 shadow-md border border-theme-border/40 shrink-0"
               />
               <div>
-                <span className="block text-xl font-bold tracking-tight text-theme-heading leading-none font-serif">
+                <span className="block text-2xl font-bold tracking-tight text-theme-heading leading-none font-serif">
                   Agriya<span className="text-theme-gold italic">Travels</span>
                 </span>
-                <p className="text-[9px] uppercase tracking-widest text-slate-400 font-semibold mt-1">
+                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mt-1.5">
                   Journeys • Memories • Trust
                 </p>
               </div>
-            </Link>
+            </a>
             <p className="text-[11px] leading-relaxed text-theme-muted max-w-sm font-light">
               Your trusted premium travel partner in Chennai. Specializing in India tours, international holidays, pilgrimage trips, and luxury vacations.
             </p>
             <div className="flex space-x-6">
-              <a href="#" className="text-slate-400 hover:text-theme-gold transition-colors">
+              <a href="#" className="text-slate-400 hover:text-theme-gold transition-colors" aria-label="Facebook">
                 <Facebook className="h-4 w-4" />
               </a>
-              <a href="#" className="text-slate-400 hover:text-theme-gold transition-colors">
+              <a href="#" className="text-slate-400 hover:text-theme-gold transition-colors" aria-label="Instagram">
                 <Instagram className="h-4 w-4" />
               </a>
-              <a href="#" className="text-slate-400 hover:text-theme-gold transition-colors">
+              <a href="#" className="text-slate-400 hover:text-theme-gold transition-colors" aria-label="Twitter">
                 <Twitter className="h-4 w-4" />
               </a>
             </div>
@@ -46,20 +45,20 @@ export default function Footer() {
               <div>
                 <h3 className="text-[10px] font-bold text-theme-heading uppercase tracking-widest">Quick Links</h3>
                 <ul role="list" className="mt-4 space-y-3">
-                  <li><Link to="/about" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">About Us</Link></li>
-                  <li><Link to="/india-tours" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">India Tours</Link></li>
-                  <li><Link to="/international-tours" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">International Packages</Link></li>
-                  <li><Link to="/ai-planner" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Trip Planner</Link></li>
-                  <li><Link to="/gallery" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Gallery</Link></li>
+                  <li><a href="/about" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">About Us</a></li>
+                  <li><a href="/india-tours" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">India Tours</a></li>
+                  <li><a href="/international-tours" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">International Packages</a></li>
+                  <li><a href="/ai-planner" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Trip Planner</a></li>
+                  <li><a href="/gallery" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Gallery</a></li>
                 </ul>
               </div>
               <div className="mt-10 md:mt-0">
                 <h3 className="text-[10px] font-bold text-theme-heading uppercase tracking-widest">Services</h3>
                 <ul role="list" className="mt-4 space-y-3">
-                  <li><Link to="/theme-tours" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Theme-Based Tours</Link></li>
-                  <li><Link to="/rentals" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Premium Transfers</Link></li>
-                  <li><Link to="/corporate" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Corporate Travel</Link></li>
-                  <li><Link to="/contact" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Contact Support</Link></li>
+                  <li><a href="/theme-tours" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Theme-Based Tours</a></li>
+                  <li><a href="/rentals" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Premium Transfers</a></li>
+                  <li><a href="/corporate" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Corporate Travel</a></li>
+                  <li><a href="/contact" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Contact Support</a></li>
                 </ul>
               </div>
             </div>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import AITripPlanner from '../components/AITripPlanner';
 import TravelInspiration from '../components/TravelInspiration';
 import SEO from '../components/SEO';
@@ -7,21 +6,27 @@ import PageTransition from '../components/PageTransition';
 import { Sparkles, Compass } from 'lucide-react';
 
 export default function AiTripPlannerPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<'planner' | 'inspiration'>('planner');
 
   useEffect(() => {
-    const tabParam = searchParams.get('tab');
-    if (tabParam === 'inspiration') {
-      setActiveTab('inspiration');
-    } else if (tabParam === 'planner') {
-      setActiveTab('planner');
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      if (tabParam === 'inspiration') {
+        setActiveTab('inspiration');
+      } else if (tabParam === 'planner') {
+        setActiveTab('planner');
+      }
     }
-  }, [searchParams]);
+  }, []);
 
   const handleTabChange = (tab: 'planner' | 'inspiration') => {
     setActiveTab(tab);
-    setSearchParams({ tab });
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', tab);
+      window.history.pushState({}, '', url.toString());
+    }
   };
 
   return (
@@ -47,14 +52,14 @@ export default function AiTripPlannerPage() {
               <div className="inline-flex bg-white/5 p-1.5 rounded-full border border-white/15 backdrop-blur-md">
                 <button
                   onClick={() => handleTabChange('planner')}
-                  className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-2 ${activeTab === 'planner' ? 'bg-theme-gold text-theme-heading shadow-md' : 'text-slate-300 hover:text-white'}`}
+                  className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-2 cursor-pointer ${activeTab === 'planner' ? 'bg-theme-gold text-theme-heading shadow-md' : 'text-slate-300 hover:text-white'}`}
                 >
                   <Sparkles className="h-4 w-4" />
                   Custom AI Planner
                 </button>
                 <button
                   onClick={() => handleTabChange('inspiration')}
-                  className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-2 ${activeTab === 'inspiration' ? 'bg-theme-gold text-theme-heading shadow-md' : 'text-slate-300 hover:text-white'}`}
+                  className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-2 cursor-pointer ${activeTab === 'inspiration' ? 'bg-theme-gold text-theme-heading shadow-md' : 'text-slate-300 hover:text-white'}`}
                 >
                   <Compass className="h-4 w-4" />
                   Travel Inspiration

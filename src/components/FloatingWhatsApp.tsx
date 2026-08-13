@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, Mail, X, Bell, BellOff } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '../data';
 import { motion, AnimatePresence } from 'motion/react';
-import { Link } from 'react-router-dom';
 
 export default function FloatingWhatsApp() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,9 +12,11 @@ export default function FloatingWhatsApp() {
   const menuRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    const savedMutedState = localStorage.getItem('whatsappMuted');
-    if (savedMutedState) {
-      setIsMuted(savedMutedState === 'true');
+    if (typeof localStorage !== 'undefined') {
+      const savedMutedState = localStorage.getItem('whatsappMuted');
+      if (savedMutedState) {
+        setIsMuted(savedMutedState === 'true');
+      }
     }
   }, []);
 
@@ -23,7 +24,9 @@ export default function FloatingWhatsApp() {
     e.stopPropagation();
     const newMutedState = !isMuted;
     setIsMuted(newMutedState);
-    localStorage.setItem('whatsappMuted', String(newMutedState));
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('whatsappMuted', String(newMutedState));
+    }
   };
   
   useEffect(() => {
@@ -107,14 +110,14 @@ export default function FloatingWhatsApp() {
               <div className="flex items-center gap-2">
                 <button 
                   onClick={toggleMute} 
-                  className="text-white hover:text-gray-300 focus:outline-none p-1 rounded-full hover:bg-white/10 transition-colors"
+                  className="text-white hover:text-gray-300 focus:outline-none p-1 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
                   title={isMuted ? "Unmute notifications" : "Mute notifications"}
                 >
                   {isMuted ? <BellOff className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
                 </button>
                 <button 
                   onClick={() => setIsOpen(false)} 
-                  className="text-white hover:text-gray-300 focus:outline-none p-1 rounded-full hover:bg-white/10 transition-colors"
+                  className="text-white hover:text-gray-300 focus:outline-none p-1 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
                   title="Close"
                 >
                   <X className="h-4 w-4" />
@@ -139,8 +142,8 @@ export default function FloatingWhatsApp() {
                 </div>
               </a>
 
-              <Link 
-                to="/contact"
+              <a 
+                href="/contact"
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl transition-colors group"
               >
@@ -151,7 +154,7 @@ export default function FloatingWhatsApp() {
                   <div className="text-sm font-bold text-theme-heading group-hover:text-theme-gold transition-colors">Contact Form</div>
                   <div className="text-xs text-theme-muted">Send us an email inquiry</div>
                 </div>
-              </Link>
+              </a>
             </div>
           </motion.div>
         )}

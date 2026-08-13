@@ -7,7 +7,6 @@ import AITripPlanner from '../components/AITripPlanner';
 import FAQSection from '../components/FAQSection';
 import SEO from '../components/SEO';
 import { tourPackages, testimonials, WHATSAPP_NUMBER } from '../data';
-import { Link } from 'react-router-dom';
 import { ShieldCheck, MapPin, HeartHandshake, Car, MessageCircle, Compass } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 import PageTransition from '../components/PageTransition';
@@ -48,14 +47,14 @@ export default function Home() {
                   <h3 className="text-xl sm:text-2xl font-bold font-serif text-theme-heading leading-tight">Popular from Chennai</h3>
                   <p className="text-xs text-theme-muted font-light mt-1">Handpicked premium itineraries</p>
                 </div>
-                <Link to="/india-tours" className="text-[10px] sm:text-xs font-bold text-theme-gold hover:text-[#c4a12f] uppercase tracking-wider transition-colors hidden sm:block">View All Packages &rarr;</Link>
+                <a href="/india-tours" className="text-[10px] sm:text-xs font-bold text-theme-gold hover:text-[#c4a12f] uppercase tracking-wider transition-colors hidden sm:block">View All Packages &rarr;</a>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {featuredPackages.map(pkg => (
                   <PackageCard key={pkg.id} pkg={pkg} displayCurrency={currency} />
               ))}
             </div>
-             <Link to="/india-tours" className="text-[10px] text-center font-bold text-theme-gold uppercase tracking-wider block sm:hidden mt-2">View All Packages &rarr;</Link>
+             <a href="/india-tours" className="text-[10px] text-center font-bold text-theme-gold uppercase tracking-wider block sm:hidden mt-2">View All Packages &rarr;</a>
           </section>
 
           {/* Interactive Travel Map */}
@@ -153,17 +152,15 @@ export default function Home() {
                     Feeling adventurous but don't know where to start? Let destiny choose or browse premium handpicked secret getaways.
                   </p>
                 </div>
-                <Link
-                  to="/ai-planner?tab=inspiration"
+                <a
+                  href="/ai-planner?tab=inspiration"
                   className="bg-theme-gold hover:bg-[#ebd074] text-theme-heading text-xs font-bold py-3 px-5 rounded-xl transition-all hover:-translate-y-0.5 text-center shadow-lg shadow-theme-gold/10"
                 >
                   Spin the Wheel of Destiny &rarr;
-                </Link>
+                </a>
               </div>
             </div>
 
-
-            
             <div className="bg-theme-card rounded-3xl p-6 shadow-sm border border-theme-border flex flex-col shrink-0">
                <h3 className="text-sm font-bold flex items-center gap-2 text-theme-heading mb-4 uppercase tracking-widest">
                   <Car className="h-4 w-4 text-theme-gold" /> Premium Transfers
@@ -183,7 +180,7 @@ export default function Home() {
                        <p className="text-xs font-bold font-serif">Airport Drops</p>
                        <p className="text-[10px] text-slate-400 font-light">Chennai International</p>
                    </div>
-                   <Link to="/rentals" className="text-[10px] font-bold text-theme-heading bg-theme-gold px-3 py-1.5 rounded-full hover:bg-theme-card transition-colors">Book</Link>
+                   <a href="/rentals" className="text-[10px] font-bold text-theme-heading bg-theme-gold px-3 py-1.5 rounded-full hover:bg-theme-card transition-colors">Book</a>
                </div>
             </div>
           </div>

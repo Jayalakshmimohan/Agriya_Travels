@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { X, Maximize2, Compass, MapPin, ZoomIn, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useNavigate } from 'react-router-dom';
 import SEO from '../components/SEO';
 import PageTransition from '../components/PageTransition';
 import LazyImage from '../components/LazyImage';
@@ -157,7 +156,6 @@ const GALLERY_ITEMS: GalleryItem[] = [
 export default function GalleryPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [filterRegion, setFilterRegion] = useState<'all' | 'India' | 'International'>('all');
-  const navigate = useNavigate();
 
   const getHighRes = (src: string) => src.replace('&w=800', '&w=1600');
 
@@ -166,7 +164,9 @@ export default function GalleryPage() {
   );
 
   const handleSelectPackage = (path: string, packageId: string) => {
-    navigate(`${path}?package=${packageId}`);
+    if (typeof window !== 'undefined') {
+      window.location.href = `${path}?package=${packageId}`;
+    }
   };
 
   return (
