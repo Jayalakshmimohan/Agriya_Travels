@@ -30,7 +30,7 @@ export default function TestimonialsPage() {
         location: formData.location,
         content: formData.content,
         rating: formData.rating,
-        avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}&background=random`
+        avatarUrl: `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(formData.name)}`
       };
       
       setTestimonialsList([newTestimonial, ...testimonialsList]);
