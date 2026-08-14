@@ -48,17 +48,93 @@ async function startServer() {
   // Gzip compression for static files and api responses (Performance Improvement)
   app.use(compression());
 
-  // Setup security headers with helmet (OWASP A05: Security Misconfiguration)
-  // Adjusted for compatibility with the AI Studio iframe preview environment
+  // Setup comprehensive security headers with helmet (OWASP Top 10 & A05: Security Misconfiguration)
   app.use(
     helmet({
-      contentSecurityPolicy: false, // Disable CSP to prevent blocking framing or assets in sandboxed preview iframe
-      frameguard: false,           // Disable X-Frame-Options to allow framing inside AI Studio preview
-      crossOriginEmbedderPolicy: false,
-      crossOriginResourcePolicy: false,
-      crossOriginOpenerPolicy: false,
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            "'unsafe-eval'",
+            "https://unpkg.com",
+            "https://cdn.jsdelivr.net"
+          ],
+          styleSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            "https://fonts.googleapis.com",
+            "https://unpkg.com"
+          ],
+          fontSrc: [
+            "'self'",
+            "https://fonts.gstatic.com",
+            "data:"
+          ],
+          imgSrc: [
+            "'self'",
+            "data:",
+            "blob:",
+            "https://images.unsplash.com",
+            "https://*.google.com",
+            "https://*.googleapis.com",
+            "https://*.gstatic.com",
+            "https://*.indianrailways.gov.in",
+            "https://*.keralatourism.org",
+            "https://*.tatnews.org",
+            "https://*.tamilnadutourism.tn.gov.in",
+            "https://*.karnatakatourism.org",
+            "https://*.tourism.rajasthan.gov.in",
+            "https://*.jktourism.jk.gov.in",
+            "https://*.srilanka.travel",
+            "https://*.indonesia.travel",
+            "https://*.malaysia.travel"
+          ],
+          connectSrc: [
+            "'self'",
+            "https://generativelanguage.googleapis.com",
+            "https://*.google.com",
+            "https://unpkg.com",
+            "https://api.open-meteo.com",
+            "ws:",
+            "wss:"
+          ],
+          mediaSrc: ["'self'", "data:", "blob:"],
+          objectSrc: ["'none'"],
+          frameSrc: ["'self'", "https://www.google.com", "https://maps.google.com"],
+          frameAncestors: ["'self'"],
+          formAction: ["'self'", "mailto:", "https://wa.me", "https://api.whatsapp.com"],
+          baseUri: ["'self'"],
+          upgradeInsecureRequests: process.env.NODE_ENV === "production" ? [] : null
+        }
+      },
+      frameguard: {
+        action: "sameorigin" // Sets X-Frame-Options: SAMEORIGIN
+      },
+      noSniff: true, // Sets X-Content-Type-Options: nosniff
+      referrerPolicy: {
+        policy: ["strict-origin-when-cross-origin", "no-referrer-when-downgrade"] // Sets Referrer-Policy
+      },
+      crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+      crossOriginResourcePolicy: { policy: "cross-origin" },
+      hsts: process.env.NODE_ENV === "production" ? {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true
+      } : false
     })
   );
+
+  // Set Permissions-Policy header and extra hardening headers
+  app.use((req, res, next) => {
+    res.setHeader(
+      "Permissions-Policy",
+      "camera=(), microphone=(), geolocation=(self), payment=(), usb=(), display-capture=(), interest-cohort=()"
+    );
+    res.setHeader("X-XSS-Protection", "1; mode=block");
+    next();
+  });
 
   // Rate Limiting to prevent DoS attacks and resource abuse (OWASP A04: Insecure Design & A05: Security Misconfiguration)
   const apiLimiter = rateLimit({
