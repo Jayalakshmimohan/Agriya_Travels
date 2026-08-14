@@ -320,7 +320,7 @@ export const testimonials: Testimonial[] = [
     location: 'Chennai',
     content: 'Agriya Travels planned our entire Europe trip meticulously. From visas to local transfers, everything was flawless. Highly recommend them!',
     rating: 5,
-    avatarUrl: 'https://api.dicebear.com/7.x/notionists/svg?seed=Priya&backgroundColor=f8fafc',
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&crop=faces&w=160&h=160&q=80',
   },
   {
     id: 't-2',
@@ -328,7 +328,7 @@ export const testimonials: Testimonial[] = [
     location: 'Bangalore',
     content: 'Our family trip to Kerala was amazing. The driver was very courteous and the hotels arranged were premium. Great value for money.',
     rating: 5,
-    avatarUrl: 'https://api.dicebear.com/7.x/notionists/svg?seed=Rajesh&backgroundColor=f8fafc',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&crop=faces&w=160&h=160&q=80',
   },
   {
     id: 't-3',
@@ -336,6 +336,6 @@ export const testimonials: Testimonial[] = [
     location: 'Mumbai',
     content: 'Booked a Maldives honeymooon package. They customized it to perfectly fit our budget and gave us some lovely surprises.',
     rating: 5,
-    avatarUrl: 'https://api.dicebear.com/7.x/notionists/svg?seed=Anita&backgroundColor=f8fafc',
+    avatarUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&crop=faces&w=160&h=160&q=80',
   }
 ];

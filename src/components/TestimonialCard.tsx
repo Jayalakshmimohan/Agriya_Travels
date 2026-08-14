@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Star } from 'lucide-react';
 import { Testimonial } from '../types';
 
@@ -7,6 +7,16 @@ interface TestimonialCardProps {
 }
 
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ t }) => {
+  const [imgError, setImgError] = useState(false);
+
+  const initials = t.name
+    .split(' ')
+    .map(n => n[0])
+    .filter(Boolean)
+    .join('')
+    .substring(0, 2)
+    .toUpperCase() || t.name.charAt(0).toUpperCase();
+
   return (
     <div className="bg-theme-card rounded-[1.5rem] p-6 shadow-sm border border-theme-border flex flex-col h-full card-hover relative overflow-hidden group">
       <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
@@ -19,11 +29,17 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ t }) => {
       </div>
       <p className="text-theme-muted text-xs italic mb-6 leading-relaxed flex-1 font-light relative z-10">"{t.content}"</p>
       <div className="mt-auto relative z-10 flex items-center gap-3">
-        {t.avatarUrl ? (
-          <img src={t.avatarUrl} alt={t.name} className="w-10 h-10 rounded-full bg-theme-navy/5 object-cover" />
+        {t.avatarUrl && !imgError ? (
+          <img
+            src={t.avatarUrl}
+            alt={t.name}
+            onError={() => setImgError(true)}
+            className="w-10 h-10 rounded-full bg-theme-navy/5 object-cover ring-2 ring-theme-gold/20 shadow-sm"
+            loading="lazy"
+          />
         ) : (
-          <div className="w-10 h-10 rounded-full bg-theme-navy/5 flex items-center justify-center text-theme-heading font-serif font-bold text-xs uppercase">
-             {t.name.charAt(0)}
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-theme-navy to-theme-teal flex items-center justify-center text-theme-gold font-serif font-bold text-xs shadow-sm ring-2 ring-theme-gold/20">
+             {initials}
           </div>
         )}
         <div>
@@ -33,6 +49,6 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ t }) => {
       </div>
     </div>
   );
-}
+};
 
 export default TestimonialCard;
