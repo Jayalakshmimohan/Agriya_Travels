@@ -10,7 +10,7 @@ export default function Footer() {
       <div className="mx-auto max-w-[1400px] px-4 py-10 sm:px-8 relative z-10">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-6 xl:col-span-1">
-             <a href="/" className="flex items-center gap-4 transition-opacity hover:opacity-90">
+            <a href="/" className="flex items-center gap-4 transition-opacity hover:opacity-90">
               <img
                 src="/logo.png"
                 alt="Agriya Travels"
@@ -76,7 +76,7 @@ export default function Footer() {
                   </li>
                   <li className="flex gap-2 items-center text-xs text-theme-muted font-light">
                     <Mail className="h-3.5 w-3.5 text-theme-gold shrink-0" />
-                    <span>hello@agriyatravels.com</span>
+                    <span>tourenquiry@agriyatravels.com</span>
                   </li>
                 </ul>
                 <div className="mt-5">
@@ -96,9 +96,9 @@ export default function Footer() {
         </div>
         <div className="mt-10 border-t border-theme-border pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex gap-6 uppercase tracking-[0.2em] text-[9px] font-bold text-slate-400">
-             <span>24/7 Support</span>
-             <span>Budget to Luxury</span>
-             <span className="hidden lg:inline">Certified Travel Experts</span>
+            <span>24/7 Support</span>
+            <span>Budget to Luxury</span>
+            <span className="hidden lg:inline">Certified Travel Experts</span>
           </div>
           <p className="text-[10px] text-slate-400 font-medium text-center">
             Site Designed and Maintained by BotifyX

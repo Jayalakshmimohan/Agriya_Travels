@@ -1,6 +1,9 @@
 import { TourPackage, Testimonial } from '../types';
 
 export const WHATSAPP_NUMBER = '919380054540'; 
+export const CAB_BOOKING_EMAIL = 'cabbooking@agriyatravels.com';
+export const TOUR_ENQUIRY_EMAIL = 'tourenquiry@agriyatravels.com';
+export const TOUR_ENQUIRY_CC_EMAIL = 'saravana@agriyatravels.com';
 
 export const tourPackages: TourPackage[] = [
   // India
