@@ -106,7 +106,7 @@ async function startServer() {
           frameAncestors: ["'self'"],
           formAction: ["'self'", "mailto:", "https://wa.me", "https://api.whatsapp.com"],
           baseUri: ["'self'"],
-          upgradeInsecureRequests: process.env.NODE_ENV === "production" ? [] : null
+          upgradeInsecureRequests: []
         }
       },
       frameguard: {
@@ -118,11 +118,11 @@ async function startServer() {
       },
       crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
       crossOriginResourcePolicy: { policy: "cross-origin" },
-      hsts: process.env.NODE_ENV === "production" ? {
+      hsts: {
         maxAge: 31536000,
         includeSubDomains: true,
         preload: true
-      } : false
+      }
     })
   );
 
