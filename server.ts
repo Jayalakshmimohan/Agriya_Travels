@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import compression from "compression";
+import leadsRouter from "./src/server/routes/leads";
 
 dotenv.config();
 
@@ -152,6 +153,10 @@ async function startServer() {
   app.use("/api/", apiLimiter);
 
   app.use(express.json());
+
+  // Lead capture: every enquiry form records here before handing off to
+  // WhatsApp / mailto. Mounted ahead of the /api/* catch-all below.
+  app.use("/api/leads", leadsRouter);
 
   // API Route for grounded travel news and tips (Always updated to current date)
   app.get("/api/travel-news", async (req, res) => {

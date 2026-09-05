@@ -3,6 +3,7 @@ import { Sparkles, Loader2, MessageSquare, Compass, Phone, Calendar, MapPin, Use
 import { motion, AnimatePresence } from 'motion/react';
 import { AITripRequest } from '../types';
 import { WHATSAPP_NUMBER } from '../data';
+import { recordLead } from '../lib/leads';
 import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
 
@@ -119,6 +120,22 @@ export default function AITripPlanner() {
     if (destErr || startErr || daysErr || travellersErr) {
       return;
     }
+
+    // Anonymous demand signal: this form collects no name or phone, so the
+    // lead is not callable — but it still tells us what people are asking for.
+    recordLead({
+      source: 'trip_planner',
+      destination: formData.destination,
+      startingCity: formData.startingCity,
+      travelDate: formData.travelDate,
+      durationDays: formData.days,
+      travellers: formData.travellers,
+      budget: formData.budget,
+      travelType: formData.travelType,
+      hotelPreference: formData.hotelPreference,
+      vehicleType: formData.vehicleRequirement,
+      message: formData.specialNeeds,
+    });
 
     setIsGenerating(true);
     setResult(null);

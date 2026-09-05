@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Send, X, FileText } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '../data';
+import { recordLead } from '../lib/leads';
 
 export default function QuickQuoteModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -95,6 +96,14 @@ export default function QuickQuoteModal() {
     if (nameErr || destErr || peopleErr || budgetErr) {
       return;
     }
+
+    recordLead({
+      source: 'quick_quote',
+      name: formData.name,
+      destination: formData.destination,
+      budget: formData.budget,
+      travellers: formData.people,
+    });
 
     const message = `Hi Agriya Travels! Quick Quote Request:\n\nName: ${formData.name}\nDestination: ${formData.destination}\nBudget: ${formData.budget || 'Not specified'}\nPeople: ${formData.people}\n\nPlease share options and pricing.`;
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;

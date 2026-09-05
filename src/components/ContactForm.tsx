@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Send, CheckCircle2, Phone, Mail, Car, MapPin, Calendar, Users, Clock, ArrowRight, RotateCcw } from 'lucide-react';
 import { WHATSAPP_NUMBER, CAB_BOOKING_EMAIL, TOUR_ENQUIRY_EMAIL, TOUR_ENQUIRY_CC_EMAIL } from '../data';
+import { recordLead } from '../lib/leads';
 
 interface ContactFormProps {
   focus?: 'general' | 'rentals' | 'corporate';
@@ -235,6 +236,25 @@ Timestamp: ${formattedTimestamp} (IST)
     setSubmittedData({
       ...formData,
       emailMeta: emailData
+    });
+
+    // Record the enquiry before handing off. Fire-and-forget by design —
+    // awaiting here would get the mailto below blocked by the browser.
+    recordLead({
+      source: 'contact_form',
+      focus,
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      destination: formData.destination,
+      travelDate: formData.travelDate,
+      travellers: formData.travellers,
+      budget: formData.budget,
+      vehicleType: focus === 'rentals' ? formData.vehicleType : undefined,
+      tripType: focus === 'rentals' ? formData.tripType : undefined,
+      pickupLocation: focus === 'rentals' ? formData.pickupLocation : undefined,
+      pickupTime: focus === 'rentals' ? formData.pickupTime : undefined,
+      message: formData.message,
     });
 
     // Launch default system mail client immediately in the user-event thread
