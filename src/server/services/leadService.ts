@@ -2,6 +2,7 @@ import { withTransaction } from '../db/client';
 import { insertLead, type LeadRow } from '../db/repositories/leadRepo';
 import { appendEvent } from '../db/repositories/eventRepo';
 import type { LeadInput } from '../schemas/lead';
+import { scoreLead } from './scoringService';
 
 /**
  * Persists an enquiry and opens its event timeline.
@@ -17,9 +18,9 @@ export async function createLead(input: LeadInput): Promise<LeadRow> {
     return row;
   });
 
-  // Phase 3 hooks in here: score the lead asynchronously so that capture
-  // never blocks on a Gemini round-trip.
-  // void scoreLeadInBackground(lead);
+  // Deliberately not awaited: scoring may call Gemini, and lead capture must
+  // never wait on it. scoreLead swallows its own failures.
+  void scoreLead(lead);
 
   return lead;
 }

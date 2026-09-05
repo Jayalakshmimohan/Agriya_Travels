@@ -29,6 +29,7 @@ export default defineConfig(() => {
           testimonials: path.resolve(__dirname, 'testimonials/index.html'),
           aiPlanner: path.resolve(__dirname, 'ai-planner/index.html'),
           contact: path.resolve(__dirname, 'contact/index.html'),
+          admin: path.resolve(__dirname, 'admin/index.html'),
           notFound: path.resolve(__dirname, '404.html'),
         },
       },

@@ -9,6 +9,8 @@ import rateLimit from "express-rate-limit";
 import compression from "compression";
 import leadsRouter from "./src/server/routes/leads";
 import aiPlannerRouter from "./src/server/routes/aiPlanner";
+import adminRouter from "./src/server/routes/admin";
+import recommendationsRouter from "./src/server/routes/recommendations";
 import { geminiModel } from "./src/server/ai/gemini";
 
 dotenv.config();
@@ -34,6 +36,7 @@ const MPA_PAGE_MAP: Record<string, string> = {
   '/testimonials': 'testimonials/index.html',
   '/ai-planner': 'ai-planner/index.html',
   '/contact': 'contact/index.html',
+  '/admin': 'admin/index.html',
   '/404': '404.html',
   '/404.html': '404.html',
 };
@@ -162,6 +165,12 @@ async function startServer() {
 
   // Gemini-backed itinerary generation.
   app.use("/api/ai", aiPlannerRouter);
+
+  // Package suggestions — public, returns only what the site already shows.
+  app.use("/api/recommendations", recommendationsRouter);
+
+  // Internal dashboard API. Bearer-token protected inside the router.
+  app.use("/api/admin", adminRouter);
 
   // API Route for grounded travel news and tips (Always updated to current date)
   app.get("/api/travel-news", async (req, res) => {
