@@ -35,6 +35,18 @@ export interface LeadPayload {
  * able to break the enquiry the customer is actually trying to send.
  */
 export function recordLead(payload: LeadPayload): void {
+  void postLead(payload).catch(() => {
+    /* offline or blocked — the WhatsApp/email handoff still happens */
+  });
+}
+
+/**
+ * Same call, but resolves with the new lead's id (or null on any failure).
+ *
+ * Only for forms that do NOT navigate away on submit — the trip planner uses
+ * it so the itinerary it then generates can be linked back to the enquiry.
+ */
+export async function postLead(payload: LeadPayload): Promise<string | null> {
   try {
     const body = JSON.stringify({
       ...payload,
@@ -42,15 +54,17 @@ export function recordLead(payload: LeadPayload): void {
         typeof window !== 'undefined' ? window.location.pathname : undefined,
     });
 
-    void fetch('/api/leads', {
+    const res = await fetch('/api/leads', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body,
       keepalive: true,
-    }).catch(() => {
-      /* offline or blocked — the WhatsApp/email handoff still happens */
     });
+
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.id ?? null;
   } catch {
-    /* never let analytics break a submission */
+    return null;
   }
 }

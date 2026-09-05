@@ -8,6 +8,8 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import compression from "compression";
 import leadsRouter from "./src/server/routes/leads";
+import aiPlannerRouter from "./src/server/routes/aiPlanner";
+import { geminiModel } from "./src/server/ai/gemini";
 
 dotenv.config();
 
@@ -158,6 +160,9 @@ async function startServer() {
   // WhatsApp / mailto. Mounted ahead of the /api/* catch-all below.
   app.use("/api/leads", leadsRouter);
 
+  // Gemini-backed itinerary generation.
+  app.use("/api/ai", aiPlannerRouter);
+
   // API Route for grounded travel news and tips (Always updated to current date)
   app.get("/api/travel-news", async (req, res) => {
     const now = new Date();
@@ -166,7 +171,7 @@ async function startServer() {
     
     try {
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: geminiModel(),
         contents: `Today is ${fullDateFormatted}. Find 4 extremely recent, real-world, and relevant travel news articles, trends, or safety advisories/tips for travelers visiting India (especially Southern India, Chennai, Tamil Nadu, Kerala, and popular international destinations from Chennai like Thailand, Sri Lanka, Malaysia, Bali) as of ${todayFormatted}. Return them as a JSON array of items with date field formatted as 'Today, ${todayFormatted}' or recent dates.`,
         config: {
           tools: [{ googleSearch: {} }],

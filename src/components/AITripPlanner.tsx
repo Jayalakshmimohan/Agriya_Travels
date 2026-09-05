@@ -3,7 +3,7 @@ import { Sparkles, Loader2, MessageSquare, Compass, Phone, Calendar, MapPin, Use
 import { motion, AnimatePresence } from 'motion/react';
 import { AITripRequest } from '../types';
 import { WHATSAPP_NUMBER } from '../data';
-import { recordLead } from '../lib/leads';
+import { postLead } from '../lib/leads';
 import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
 
@@ -109,7 +109,41 @@ export default function AITripPlanner() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  /**
+   * The original template generator, kept as a fallback so an API outage or a
+   * missing key degrades the feature instead of breaking it — the same
+   * defensive pattern TravelTipsTrends uses for /api/travel-news.
+   */
+  const buildTemplatePlan = () => {
+    const days = parseInt(formData.days) || 5;
+    const t = parseInt(formData.travellers) || 2;
+    let costPerDay = 4500;
+    if (formData.budget === 'Premium') costPerDay = 7500;
+    if (formData.budget === 'Luxury') costPerDay = 12000;
+    if (formData.budget === 'Budget-Friendly') costPerDay = 2500;
+
+    const minCost = days * costPerDay * t;
+    const maxCost = minCost * 1.3;
+
+    return {
+      title: `${formData.days}-Day ${formData.travelType} Escape to ${formData.destination}`,
+      highlights: [
+        'Handpicked local experiences',
+        `${formData.hotelPreference} Accommodations`,
+        `Private ${formData.vehicleRequirement} transfers`,
+        '24/7 dedicated travel concierge'
+      ],
+      itinerary: Array.from({ length: Math.min(days, 7) }).map((_, i) => ({
+        day: i + 1,
+        title: i === 0 ? `Arrival & Welcome to ${formData.destination}` : i === days - 1 ? 'Departure with Memories' : `Immersive Sightseeing & Leisure`,
+        desc: i === 0 ? `Private pick-up from the airport/station. Check-in and relax at your ${formData.hotelPreference.toLowerCase()} property.` : i === days - 1 ? `Morning at leisure. Check-out and private transfer to the airport.` : `Guided tour of the most iconic spots. Evening free to explore local markets and cuisine.`
+      })),
+      cost: `₹${minCost.toLocaleString('en-IN')} - ₹${maxCost.toLocaleString('en-IN')}`,
+      note: `Best time to visit ${formData.destination} is usually between Oct-March. Rates vary by exact season.`
+    };
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const destErr = validateField('destination', formData.destination);
@@ -121,9 +155,12 @@ export default function AITripPlanner() {
       return;
     }
 
-    // Anonymous demand signal: this form collects no name or phone, so the
-    // lead is not callable — but it still tells us what people are asking for.
-    recordLead({
+    setIsGenerating(true);
+    setResult(null);
+
+    // Awaited here (unlike the other forms) because this one doesn't navigate
+    // away — so the itinerary can be linked back to the enquiry that produced it.
+    const leadId = await postLead({
       source: 'trip_planner',
       destination: formData.destination,
       startingCity: formData.startingCity,
@@ -137,41 +174,38 @@ export default function AITripPlanner() {
       message: formData.specialNeeds,
     });
 
-    setIsGenerating(true);
-    setResult(null);
+    try {
+      const response = await fetch('/api/ai/plan-trip', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          destination: formData.destination,
+          startingCity: formData.startingCity,
+          travelDate: formData.travelDate,
+          days: formData.days,
+          travellers: formData.travellers,
+          travelType: formData.travelType,
+          budget: formData.budget,
+          hotelPreference: formData.hotelPreference,
+          vehicleRequirement: formData.vehicleRequirement,
+          specialNeeds: formData.specialNeeds,
+          leadId: leadId ?? undefined,
+        }),
+      });
 
-    // Simulate AI generation with a structured response
-    setTimeout(() => {
-      const days = parseInt(formData.days) || 5;
-      const t = parseInt(formData.travellers) || 2;
-      let costPerDay = 4500;
-      if (formData.budget === 'Premium') costPerDay = 7500;
-      if (formData.budget === 'Luxury') costPerDay = 12000;
-      if (formData.budget === 'Budget-Friendly') costPerDay = 2500;
-
-      const minCost = days * costPerDay * t;
-      const maxCost = minCost * 1.3;
-
-      const generatedPlan = {
-        title: `${formData.days}-Day ${formData.travelType} Escape to ${formData.destination}`,
-        highlights: [
-          'Handpicked local experiences',
-          `${formData.hotelPreference} Accommodations`,
-          `Private ${formData.vehicleRequirement} transfers`,
-          '24/7 dedicated travel concierge'
-        ],
-        itinerary: Array.from({ length: Math.min(days, 7) }).map((_, i) => ({
-          day: i + 1,
-          title: i === 0 ? `Arrival & Welcome to ${formData.destination}` : i === days - 1 ? 'Departure with Memories' : `Immersive Sightseeing & Leisure`,
-          desc: i === 0 ? `Private pick-up from the airport/station. Check-in and relax at your ${formData.hotelPreference.toLowerCase()} property.` : i === days - 1 ? `Morning at leisure. Check-out and private transfer to the airport.` : `Guided tour of the most iconic spots. Evening free to explore local markets and cuisine.`
-        })),
-        cost: `₹${minCost.toLocaleString('en-IN')} - ₹${maxCost.toLocaleString('en-IN')}`,
-        note: `Best time to visit ${formData.destination} is usually between Oct-March. Rates vary by exact season.`
-      };
-
-      setResult(generatedPlan);
+      if (response.ok) {
+        const json = await response.json();
+        if (json?.success && json.data) {
+          setResult(json.data);
+          return;
+        }
+      }
+      throw new Error('Planner API unavailable');
+    } catch {
+      setResult(buildTemplatePlan());
+    } finally {
       setIsGenerating(false);
-    }, 3000);
+    }
   };
 
   const handleWhatsApp = () => {
