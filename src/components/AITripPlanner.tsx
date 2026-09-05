@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Sparkles, Loader2, MessageSquare, Compass, Phone, Calendar, MapPin, Users, Hotel, Car, Heart, CheckCircle2, Download } from 'lucide-react';
+import { Sparkles, Loader2, MessageSquare, Compass, Phone, Calendar, MapPin, Users, Hotel, Car, Heart, CheckCircle2, Download, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AITripRequest } from '../types';
 import { WHATSAPP_NUMBER } from '../data';
@@ -73,6 +73,10 @@ export default function AITripPlanner() {
   };
   const [result, setResult] = useState<any | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  // Set when the AI planner was unreachable and we served the local template.
+  // Showing a generic outline as though it were AI-generated is the same kind
+  // of silent failure that hid the bad model id for months.
+  const [usedFallback, setUsedFallback] = useState(false);
   const itineraryRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadPDF = async () => {
@@ -196,12 +200,14 @@ export default function AITripPlanner() {
       if (response.ok) {
         const json = await response.json();
         if (json?.success && json.data) {
+          setUsedFallback(false);
           setResult(json.data);
           return;
         }
       }
       throw new Error('Planner API unavailable');
     } catch {
+      setUsedFallback(true);
       setResult(buildTemplatePlan());
     } finally {
       setIsGenerating(false);
@@ -430,6 +436,15 @@ export default function AITripPlanner() {
             </motion.div>
           ) : (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 py-2">
+              {usedFallback && (
+                <div className="flex items-start gap-2.5 bg-amber-400/15 border border-amber-400/30 rounded-xl p-3.5">
+                  <Info className="h-4 w-4 text-amber-300 shrink-0 mt-0.5" />
+                  <p className="text-[11px] text-amber-100 leading-relaxed">
+                    Our AI planner is busy right now, so this is a standard outline rather than a
+                    tailored plan. Message us on WhatsApp and we'll build you a proper one.
+                  </p>
+                </div>
+              )}
               <div ref={itineraryRef} className="bg-theme-card rounded-2xl p-6 text-theme-heading relative overflow-hidden shadow-2xl">
                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                   <Compass className="h-32 w-32" />

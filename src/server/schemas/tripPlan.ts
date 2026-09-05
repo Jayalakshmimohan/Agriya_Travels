@@ -36,3 +36,14 @@ export const tripPlanSchema = z.object({
 });
 
 export type TripPlan = z.infer<typeof tripPlanSchema>;
+
+/**
+ * What the model is allowed to return: everything except the cost.
+ *
+ * The price is computed in TypeScript from real package data and the fee
+ * schedule, then attached. Letting the model produce a rupee figure — as this
+ * endpoint used to — means a customer can be quoted a number nobody
+ * calculated.
+ */
+export const tripPlanModelOutputSchema = tripPlanSchema.omit({ cost: true });
+export type TripPlanModelOutput = z.infer<typeof tripPlanModelOutputSchema>;

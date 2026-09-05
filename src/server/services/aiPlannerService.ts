@@ -3,12 +3,17 @@ import { getGemini, geminiModel } from '../ai/gemini';
 import { allPackages, type PackageRow } from '../db/repositories/packageRepo';
 import { insertTripPlan } from '../db/repositories/planRepo';
 import { appendEvent } from '../db/repositories/eventRepo';
-import { tripPlanSchema, type TripPlan, type TripPlanRequest } from '../schemas/tripPlan';
+import { tripPlanModelOutputSchema, type TripPlan, type TripPlanRequest } from '../schemas/tripPlan';
+import { getGlobalFees } from '../db/repositories/travelRepo';
+import { calculateCost, type CostInput, type FeeRule, type CostBreakdown } from './costEstimationService';
 
 export interface GeneratedPlan {
   plan: TripPlan;
   groundedPackageIds: string[];
   model: string;
+  /** Itemised, computed in code. The model never sees or produces this. */
+  costBreakdown: CostBreakdown;
+  costBasis: 'package' | 'day_rate';
 }
 
 export interface CandidateSelection {
@@ -107,7 +112,7 @@ ${inventory}
 Requirements:
 1. Name real places, landmarks, and experiences at the destination. Never write filler like "guided tour of iconic spots" — be concrete about which spots.
 2. Write one itinerary entry per day, up to a maximum of 7 entries. If the trip is longer than 7 days, group the later days sensibly.
-3. Give a realistic total cost for ${request.travellers} travellers over ${request.days} days at a ${request.budget || 'Moderate'} budget, as an Indian Rupee range, e.g. "₹45,000 - ₹58,500".
+3. Do NOT mention prices, costs or rupee figures anywhere. Our system calculates the price separately and will attach it.
 4. Write the "note" as one or two sentences of genuinely useful practical advice for this specific destination and season — best time to visit, permits needed, weather warnings, or local customs.
 5. Keep the tone warm and professional. This is shown directly to a paying customer.`;
 }
@@ -137,16 +142,12 @@ const RESPONSE_SCHEMA = {
         required: ['day', 'title', 'desc'],
       },
     },
-    cost: {
-      type: Type.STRING,
-      description: 'Total estimated cost range in INR for the whole party, e.g. "₹45,000 - ₹58,500".',
-    },
     note: {
       type: Type.STRING,
       description: 'One or two sentences of practical, destination-specific advice.',
     },
   },
-  required: ['title', 'highlights', 'itinerary', 'cost', 'note'],
+  required: ['title', 'highlights', 'itinerary', 'note'],
 };
 
 /**
@@ -163,6 +164,84 @@ function isRetryable(err: unknown): boolean {
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/** Per-person, per-day rates used only when no real package price applies. */
+const DAY_RATE_BY_BUDGET: Record<string, number> = {
+  'budget-friendly': 2500,
+  moderate: 4500,
+  premium: 7500,
+  luxury: 12000,
+};
+
+/** '5 Nights / 6 Days' -> 6 */
+function packageDays(duration: string | null): number | null {
+  const nights = duration?.match(/(\d+)\s*Night/i);
+  if (nights) return parseInt(nights[1], 10) + 1;
+  const days = duration?.match(/(\d+)\s*Day/i);
+  return days ? parseInt(days[1], 10) : null;
+}
+
+/**
+ * Prices the trip in TypeScript, never in the model.
+ *
+ * Anchored on a real package price where one covers the destination, so the
+ * quote reflects what Agriya actually charges; otherwise it falls back to a
+ * declared day rate. Either way the figure is computed, itemised and auditable
+ * rather than produced by a language model.
+ */
+function priceTrip(
+  request: TripPlanRequest,
+  candidates: CandidateSelection,
+  fees: FeeRule[]
+): { breakdown: CostBreakdown; basis: 'package' | 'day_rate' } {
+  const travellers = request.travellers;
+  const days = request.days;
+
+  const anchor = candidates.destinationMatched
+    ? candidates.packages
+        .filter((p) => p.price_inr !== null)
+        .sort((a, b) => (a.price_inr ?? 0) - (b.price_inr ?? 0))[0]
+    : undefined;
+
+  const inputs: CostInput[] = [];
+  let basis: 'package' | 'day_rate' = 'day_rate';
+
+  if (anchor?.price_inr) {
+    // Scale the package's own price by how much longer or shorter this trip is.
+    const anchorDays = packageDays(anchor.duration) ?? days;
+    const ratio = anchorDays > 0 ? days / anchorDays : 1;
+    const perPerson = Math.round(anchor.price_inr * Math.max(0.5, ratio));
+
+    inputs.push({
+      type: 'activity',
+      label: `${anchor.title} (scaled to ${days} day${days > 1 ? 's' : ''})`,
+      detail: `Based on our published price of ₹${anchor.price_inr.toLocaleString('en-IN')} for ${anchor.duration ?? 'this package'}`,
+      unitPrice: perPerson,
+      quantity: travellers,
+      unit: 'per_person',
+      dataSource: 'CLIENT_PROVIDED',
+      confidence: 'INDICATIVE',
+    });
+    basis = 'package';
+  } else {
+    const rate =
+      DAY_RATE_BY_BUDGET[(request.budget ?? 'moderate').toLowerCase()] ??
+      DAY_RATE_BY_BUDGET.moderate;
+
+    inputs.push({
+      type: 'activity',
+      label: `${request.budget ?? 'Moderate'} day rate — ${days} day${days > 1 ? 's' : ''}`,
+      detail: 'Estimate: we have no published package covering this destination',
+      unitPrice: rate * days,
+      quantity: travellers,
+      unit: 'per_person',
+      dataSource: 'SYNTHETIC',
+      confidence: 'ILLUSTRATIVE',
+    });
+  }
+
+  return { breakdown: calculateCost(inputs, fees), basis };
+}
 
 export async function generatePlan(
   request: TripPlanRequest
@@ -181,7 +260,7 @@ export async function generatePlan(
   let response;
   let lastErr: unknown;
 
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < 4; attempt++) {
     try {
       response = await getGemini().models.generateContent({
         model,
@@ -194,8 +273,8 @@ export async function generatePlan(
       break;
     } catch (err) {
       lastErr = err;
-      if (!isRetryable(err) || attempt === 2) throw err;
-      await sleep(600 * 2 ** attempt); // 600ms, then 1200ms
+      if (!isRetryable(err) || attempt === 3) throw err;
+      await sleep(800 * 2 ** attempt); // 0.8s, 1.6s, 3.2s
     }
   }
 
@@ -206,7 +285,7 @@ export async function generatePlan(
     throw new Error('Gemini returned an empty response');
   }
 
-  const parsed = tripPlanSchema.safeParse(JSON.parse(text));
+  const parsed = tripPlanModelOutputSchema.safeParse(JSON.parse(text));
   if (!parsed.success) {
     throw new Error(
       `Gemini response did not match the expected plan shape: ${parsed.error.issues
@@ -215,7 +294,25 @@ export async function generatePlan(
     );
   }
 
-  const plan = parsed.data;
+  // Price it here, not in the model. calculateCost is pure and unit-tested;
+  // a rupee figure a language model produced is a number nobody calculated.
+  const fees = await getGlobalFees();
+  const { breakdown, basis } = priceTrip(
+    request,
+    candidates,
+    fees.map((f) => ({
+      kind: f.kind as FeeRule['kind'],
+      label: f.label,
+      amountInr: f.amount_inr,
+      percent: f.percent,
+    }))
+  );
+
+  const plan: TripPlan = {
+    ...parsed.data,
+    cost: `₹${breakdown.totalInr.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`,
+  };
+
   // Only record packages that genuinely matched — an unmatched sample was
   // context for tone, not grounding, and storing it would overstate the link.
   const groundedPackageIds = candidates.destinationMatched
@@ -225,7 +322,7 @@ export async function generatePlan(
   const saved = await insertTripPlan({
     leadId: request.leadId ?? null,
     request,
-    plan,
+    plan: { ...plan, costBreakdown: breakdown, costBasis: basis },
     model,
     groundedPackageIds,
     tokenUsage: response.usageMetadata ?? null,
@@ -239,5 +336,5 @@ export async function generatePlan(
     });
   }
 
-  return { plan, groundedPackageIds, model };
+  return { plan, groundedPackageIds, model, costBreakdown: breakdown, costBasis: basis };
 }
