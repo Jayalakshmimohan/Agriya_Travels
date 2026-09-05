@@ -6,12 +6,13 @@ let client: GoogleGenAI | null = null;
  * The model every AI service uses. Overridable without a code change:
  * set GEMINI_MODEL in .env.
  *
- * This exists because the model id used to be hardcoded in server.ts, and a
- * wrong value there failed silently — the endpoint just served its fallback
- * forever. One constant, one place to fix.
+ * Centralised because the id was previously hardcoded in server.ts. A wrong
+ * value there fails silently — generateContent throws and the endpoint serves
+ * its fallback forever — so it is worth having exactly one place to change
+ * and one place to check.
  */
 export function geminiModel(): string {
-  return process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  return process.env.GEMINI_MODEL || 'gemini-3.5-flash';
 }
 
 /**
@@ -35,8 +36,16 @@ export function getGemini(): GoogleGenAI {
   return client;
 }
 
-/** True when a plausibly real key is configured (not blank, not a placeholder). */
+/**
+ * True when a plausibly real key is configured.
+ *
+ * Deliberately does not check the prefix: Google issues both "AIza..." keys
+ * and "AQ..." keys, so pattern-matching the format would reject valid keys.
+ * Length plus a placeholder check is all we can safely assert — anything
+ * stricter is Google's job to reject.
+ */
 export function hasGeminiKey(): boolean {
-  const key = process.env.GEMINI_API_KEY;
-  return Boolean(key && key.startsWith('AIza') && key.length > 30);
+  const key = process.env.GEMINI_API_KEY?.trim();
+  if (!key || key.length < 20) return false;
+  return !/^(your|my|test|placeholder|changeme)/i.test(key);
 }
