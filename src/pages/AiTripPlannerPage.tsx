@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import AITripPlanner from '../components/AITripPlanner';
 import TravelInspiration from '../components/TravelInspiration';
+import TravelAssistantChat from '../components/TravelAssistantChat';
 import SEO from '../components/SEO';
 import PageTransition from '../components/PageTransition';
-import { Sparkles, Compass } from 'lucide-react';
+import { Sparkles, Compass, MessagesSquare } from 'lucide-react';
+
+type TabKey = 'assistant' | 'planner' | 'inspiration';
 
 export default function AiTripPlannerPage() {
-  const [activeTab, setActiveTab] = useState<'planner' | 'inspiration'>('planner');
+  const [activeTab, setActiveTab] = useState<TabKey>('assistant');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get('tab');
-      if (tabParam === 'inspiration') {
-        setActiveTab('inspiration');
-      } else if (tabParam === 'planner') {
-        setActiveTab('planner');
+      if (tabParam === 'inspiration' || tabParam === 'planner' || tabParam === 'assistant') {
+        setActiveTab(tabParam);
       }
     }
   }, []);
 
-  const handleTabChange = (tab: 'planner' | 'inspiration') => {
+  const handleTabChange = (tab: TabKey) => {
     setActiveTab(tab);
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
@@ -44,12 +45,19 @@ export default function AiTripPlannerPage() {
               AI-Powered Trip Planning
             </h1>
             <p className="mt-4 text-sm sm:text-base text-slate-300 font-light max-w-2xl mx-auto">
-              Choose to design a custom day-by-day itinerary with our smart planner, or discover hidden gems, trending hot-spots, and underrated destinations on our Inspiration Hub!
+              Tell us about your trip in your own words and we'll price real options for you — or design a day-by-day itinerary, or browse the Inspiration Hub for ideas.
             </p>
 
             {/* Premium Tab Toggle */}
             <div className="flex justify-center mt-10">
               <div className="inline-flex bg-white/5 p-1.5 rounded-full border border-white/15 backdrop-blur-md">
+                <button
+                  onClick={() => handleTabChange('assistant')}
+                  className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-2 cursor-pointer ${activeTab === 'assistant' ? 'bg-theme-gold text-theme-heading shadow-md' : 'text-slate-300 hover:text-white'}`}
+                >
+                  <MessagesSquare className="h-4 w-4" />
+                  Travel Assistant
+                </button>
                 <button
                   onClick={() => handleTabChange('planner')}
                   className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-2 cursor-pointer ${activeTab === 'planner' ? 'bg-theme-gold text-theme-heading shadow-md' : 'text-slate-300 hover:text-white'}`}
@@ -70,7 +78,11 @@ export default function AiTripPlannerPage() {
         </div>
 
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8 -mt-20 relative z-20">
-          {activeTab === 'planner' ? (
+          {activeTab === 'assistant' ? (
+            <div className="max-w-3xl mx-auto bg-theme-bg border border-theme-border rounded-[2.5rem] p-5 sm:p-8 shadow-sm">
+              <TravelAssistantChat />
+            </div>
+          ) : activeTab === 'planner' ? (
             <div className="max-w-4xl mx-auto">
               <AITripPlanner />
             </div>

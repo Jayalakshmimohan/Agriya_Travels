@@ -10,8 +10,10 @@
     "db:migrate": "tsx src/server/db/migrate.ts",
     "db:seed": "tsx src/server/scripts/seedPackages.ts",
     "db:score": "tsx src/server/scripts/scoreLeads.ts",
+    "db:seed:travel": "tsx src/server/scripts/seedTravelData.ts",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test": "tsx --test src/server/**/*.test.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

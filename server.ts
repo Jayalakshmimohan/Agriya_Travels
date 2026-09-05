@@ -9,6 +9,7 @@ import rateLimit from "express-rate-limit";
 import compression from "compression";
 import leadsRouter from "./src/server/routes/leads";
 import aiPlannerRouter from "./src/server/routes/aiPlanner";
+import assistantRouter from "./src/server/routes/assistant";
 import adminRouter from "./src/server/routes/admin";
 import recommendationsRouter from "./src/server/routes/recommendations";
 import { geminiModel } from "./src/server/ai/gemini";
@@ -165,6 +166,9 @@ async function startServer() {
 
   // Gemini-backed itinerary generation.
   app.use("/api/ai", aiPlannerRouter);
+
+  // Conversational travel assistant: natural language in, priced options out.
+  app.use("/api/ai/assistant", assistantRouter);
 
   // Package suggestions — public, returns only what the site already shows.
   app.use("/api/recommendations", recommendationsRouter);
