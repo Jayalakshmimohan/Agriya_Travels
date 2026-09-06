@@ -105,15 +105,49 @@ let tlsHintShown = false;
 function explainTlsInterception(code: string) {
   if (tlsHintShown) return;
   tlsHintShown = true;
-  console.error(
-    `\n  Outbound HTTPS is being intercepted (${code}).\n` +
-      `  Node does not trust your corporate proxy's root certificate — this is\n` +
-      `  a machine setup issue, not a bug in the app. Fix it once with:\n\n` +
-      `      setx NODE_OPTIONS "--use-system-ca"\n\n` +
-      `  then open a NEW terminal and run npm run dev again.\n` +
-      `  (Do NOT use NODE_TLS_REJECT_UNAUTHORIZED=0 — that disables all\n` +
-      `  certificate checking, including for your database connection.)\n`
+
+  // Report what THIS process can actually see. Telling someone to run a
+  // command they have already run — because setx does not affect the window
+  // it was typed in — sends them round the same loop.
+  const caFile = process.env.NODE_EXTRA_CA_CERTS;
+  const nodeOptions = process.env.NODE_OPTIONS;
+
+  const lines = [
+    ``,
+    `  Outbound HTTPS is being intercepted (${code}).`,
+    `  Node does not trust your corporate proxy's certificate chain. This is a`,
+    `  machine setup issue, not a bug in the app.`,
+    ``,
+    `  This process sees:`,
+    `    NODE_EXTRA_CA_CERTS = ${caFile ?? '(not set)'}`,
+    `    NODE_OPTIONS        = ${nodeOptions ?? '(not set)'}`,
+    ``,
+  ];
+
+  if (!caFile) {
+    lines.push(
+      `  Set the CA bundle, then open a NEW terminal — setx does not affect the`,
+      `  window you type it in:`,
+      ``,
+      `      setx NODE_EXTRA_CA_CERTS "C:\\path\\to\\corporate-ca.pem"`,
+      ``
+    );
+  } else {
+    lines.push(
+      `  The bundle is loaded but does not cover this chain. Check the file`,
+      `  exists and contains both the proxy root AND its intermediate, or ask`,
+      `  IT to exempt generativelanguage.googleapis.com from TLS inspection.`,
+      ``
+    );
+  }
+
+  lines.push(
+    `  Do NOT use NODE_TLS_REJECT_UNAUTHORIZED=0 — it disables certificate`,
+    `  checking for every connection, including the database.`,
+    ``
   );
+
+  console.error(lines.join('\n'));
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
