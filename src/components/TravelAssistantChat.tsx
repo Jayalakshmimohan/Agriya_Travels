@@ -59,7 +59,12 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   discount: Receipt,
 };
 
-export default function TravelAssistantChat() {
+interface TravelAssistantChatProps {
+  /** Tightens spacing and unsticks the composer for the floating panel. */
+  compact?: boolean;
+}
+
+export default function TravelAssistantChat({ compact = false }: TravelAssistantChatProps) {
   const [turns, setTurns] = useState<ChatTurn[]>([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
@@ -122,11 +127,11 @@ export default function TravelAssistantChat() {
   })();
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className={`flex flex-col ${compact ? 'gap-4' : 'gap-6'}`}>
       {/* Conversation */}
-      <div className="flex flex-col gap-5 min-h-[280px]">
+      <div className={`flex flex-col ${compact ? 'gap-4' : 'gap-5'} ${compact ? '' : 'min-h-[280px]'}`}>
         {turns.length === 0 && !busy && (
-          <div className="bg-theme-card border border-theme-border rounded-3xl p-6 sm:p-8">
+          <div className={`bg-theme-card border border-theme-border rounded-3xl ${compact ? 'p-4' : 'p-6 sm:p-8'}`}>
             <div className="flex items-center gap-3 mb-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-theme-gold/15 text-theme-gold">
                 <Sparkles className="h-5 w-5" />
@@ -258,7 +263,7 @@ export default function TravelAssistantChat() {
           e.preventDefault();
           void send(input);
         }}
-        className="flex gap-3 sticky bottom-4"
+        className={`flex gap-3 ${compact ? '' : 'sticky bottom-4'}`}
       >
         <input
           value={input}
