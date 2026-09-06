@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
+import { spawn } from "child_process";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
@@ -436,7 +437,43 @@ async function startServer() {
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
+    openInBrowser(PORT);
   });
+}
+
+/**
+ * Opens the site on startup in development.
+ *
+ * Vite normally does this, but it runs here in middlewareMode inside Express,
+ * so it never owns the HTTP server and its `server.open` option is ignored.
+ *
+ * Deliberately narrow: production is excluded so this can never fire on Cloud
+ * Run, and OPEN_BROWSER=false turns it off for anyone who finds it annoying.
+ */
+function openInBrowser(port: number) {
+  if (process.env.NODE_ENV === "production") return;
+  if (process.env.OPEN_BROWSER === "false") return;
+
+  const url = process.env.OPEN_BROWSER_URL || `http://localhost:${port}`;
+
+  // Only ever a fixed command with the URL as a separate argument — never an
+  // interpolated shell string, which env-supplied values could break out of.
+  const [command, args]: [string, string[]] =
+    process.platform === "win32"
+      ? ["cmd", ["/c", "start", "", url]]
+      : process.platform === "darwin"
+        ? ["open", [url]]
+        : ["xdg-open", [url]];
+
+  try {
+    const child = spawn(command, args, { stdio: "ignore", detached: true });
+    // Failing to open a browser must never take the server down — a headless
+    // machine has no xdg-open and that is fine.
+    child.on("error", () => {});
+    child.unref();
+  } catch {
+    /* not worth reporting */
+  }
 }
 
 startServer();
