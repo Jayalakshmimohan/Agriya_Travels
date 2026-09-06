@@ -71,9 +71,49 @@ export function geminiModels(): string[] {
 
 const RETRYABLE_STATUSES = new Set([429, 500, 502, 503, 504]);
 
+/**
+ * TLS failures caused by a corporate proxy that re-signs HTTPS traffic.
+ *
+ * Node ships its own CA bundle and ignores the Windows certificate store, so
+ * on a machine behind Zscaler/Netskope every outbound HTTPS call fails even
+ * though the browser is perfectly happy. Retrying cannot help — the
+ * certificate will not become trusted on the second attempt.
+ */
+const TLS_ERROR_CODES = new Set([
+  'SELF_SIGNED_CERT_IN_CHAIN',
+  'DEPTH_ZERO_SELF_SIGNED_CERT',
+  'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+  'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+  'CERT_UNTRUSTED',
+]);
+
+export function tlsInterceptionCode(err: unknown): string | null {
+  const cause = (err as { cause?: { code?: string } })?.cause;
+  const code = cause?.code ?? (err as { code?: string })?.code;
+  return code && TLS_ERROR_CODES.has(code) ? code : null;
+}
+
 function isRetryable(err: unknown): boolean {
+  // Never burn 8 attempts on a certificate problem.
+  if (tlsInterceptionCode(err)) return false;
   const status = (err as { status?: number })?.status;
   return typeof status === 'number' && RETRYABLE_STATUSES.has(status);
+}
+
+let tlsHintShown = false;
+
+function explainTlsInterception(code: string) {
+  if (tlsHintShown) return;
+  tlsHintShown = true;
+  console.error(
+    `\n  Outbound HTTPS is being intercepted (${code}).\n` +
+      `  Node does not trust your corporate proxy's root certificate — this is\n` +
+      `  a machine setup issue, not a bug in the app. Fix it once with:\n\n` +
+      `      setx NODE_OPTIONS "--use-system-ca"\n\n` +
+      `  then open a NEW terminal and run npm run dev again.\n` +
+      `  (Do NOT use NODE_TLS_REJECT_UNAUTHORIZED=0 — that disables all\n` +
+      `  certificate checking, including for your database connection.)\n`
+  );
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -122,6 +162,13 @@ export async function generateWithFallback(args: {
         return { text, model, usageMetadata: raw.usageMetadata ?? null, raw };
       } catch (err) {
         lastErr = err;
+
+        const tlsCode = tlsInterceptionCode(err);
+        if (tlsCode) {
+          explainTlsInterception(tlsCode);
+          throw err;
+        }
+
         const status = (err as { status?: number })?.status;
         // Log every failure, not just the final one. A 502 with no server-side
         // trace of which model failed and why is the hardest thing to debug,
