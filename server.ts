@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
+import os from "os";
 import { spawn } from "child_process";
 import { createServer as createViteServer } from "vite";
 import { Type } from "@google/genai";
@@ -443,6 +444,22 @@ async function startServer() {
 function openInBrowser(port: number) {
   if (process.env.NODE_ENV === "production") return;
   if (process.env.OPEN_BROWSER === "false") return;
+
+  // Under `tsx watch` this function runs again on every restart, and opening a
+  // fresh tab each time you save a file is intolerable. The watch supervisor's
+  // pid stays constant across restarts, so a marker holding it distinguishes
+  // "restarted" from "started fresh".
+  const marker = path.join(os.tmpdir(), `agriya-dev-${port}.pid`);
+  try {
+    if (fs.readFileSync(marker, "utf8").trim() === String(process.ppid)) return;
+  } catch {
+    /* no marker yet — this is a fresh start */
+  }
+  try {
+    fs.writeFileSync(marker, String(process.ppid));
+  } catch {
+    /* a read-only temp dir just means we may open an extra tab */
+  }
 
   const url = process.env.OPEN_BROWSER_URL || `http://localhost:${port}`;
 

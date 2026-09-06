@@ -122,6 +122,15 @@ export async function generateWithFallback(args: {
         return { text, model, usageMetadata: raw.usageMetadata ?? null, raw };
       } catch (err) {
         lastErr = err;
+        const status = (err as { status?: number })?.status;
+        // Log every failure, not just the final one. A 502 with no server-side
+        // trace of which model failed and why is the hardest thing to debug,
+        // and this path has cost real hours of exactly that.
+        console.warn(
+          `Gemini ${model} attempt ${attempt + 1}/${attempts} failed` +
+            (status ? ` (HTTP ${status})` : '') +
+            `: ${String((err as Error).message ?? err).slice(0, 200)}`
+        );
         if (!isRetryable(err)) throw err;
         if (attempt < attempts - 1) await sleep(700 * (attempt + 1));
       }
