@@ -1,4 +1,4 @@
-import { getGemini, geminiModel } from '../ai/gemini';
+import { generateWithFallback } from '../ai/gemini';
 import {
   travelRequirementSchema, REQUIREMENT_RESPONSE_SCHEMA, type TravelRequirement,
 } from '../schemas/travelRequirement';
@@ -76,20 +76,15 @@ export async function extractRequirements(
   message: string,
   previous: TravelRequirement | null = null
 ): Promise<ExtractionResult> {
-  const model = geminiModel();
   const today = new Date().toISOString().slice(0, 10);
 
-  const response = await getGemini().models.generateContent({
-    model,
+  const { text, model, usageMetadata } = await generateWithFallback({
     contents: buildPrompt(message, previous, today),
     config: {
       responseMimeType: 'application/json',
       responseSchema: REQUIREMENT_RESPONSE_SCHEMA as never,
     },
   });
-
-  const text = response.text;
-  if (!text) throw new Error('Requirement extraction returned an empty response');
 
   const raw = JSON.parse(text) as Record<string, unknown>;
 
@@ -160,7 +155,7 @@ export async function extractRequirements(
   return {
     requirement: parsed.data,
     model,
-    tokenUsage: response.usageMetadata ?? null,
+    tokenUsage: usageMetadata,
   };
 }
 

@@ -3,7 +3,7 @@ import path from "path";
 import fs from "fs";
 import { spawn } from "child_process";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI, Type } from "@google/genai";
+import { Type } from "@google/genai";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -13,18 +13,9 @@ import aiPlannerRouter from "./src/server/routes/aiPlanner";
 import assistantRouter from "./src/server/routes/assistant";
 import adminRouter from "./src/server/routes/admin";
 import recommendationsRouter from "./src/server/routes/recommendations";
-import { geminiModel } from "./src/server/ai/gemini";
+import { generateWithFallback } from "./src/server/ai/gemini";
 
 dotenv.config();
-
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  httpOptions: {
-    headers: {
-      'User-Agent': 'aistudio-build',
-    }
-  }
-});
 
 const MPA_PAGE_MAP: Record<string, string> = {
   '/': 'index.html',
@@ -184,8 +175,7 @@ async function startServer() {
     const fullDateFormatted = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     
     try {
-      const response = await ai.models.generateContent({
-        model: geminiModel(),
+      const { raw: response } = await generateWithFallback({
         contents: `Today is ${fullDateFormatted}. Find 4 extremely recent, real-world, and relevant travel news articles, trends, or safety advisories/tips for travelers visiting India (especially Southern India, Chennai, Tamil Nadu, Kerala, and popular international destinations from Chennai like Thailand, Sri Lanka, Malaysia, Bali) as of ${todayFormatted}. Return them as a JSON array of items with date field formatted as 'Today, ${todayFormatted}' or recent dates.`,
         config: {
           tools: [{ googleSearch: {} }],

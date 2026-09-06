@@ -1,5 +1,5 @@
 import { Type } from '@google/genai';
-import { getGemini, geminiModel, hasGeminiKey } from '../ai/gemini';
+import { generateWithFallback, hasGeminiKey } from '../ai/gemini';
 import { updateLeadScore, type LeadRow } from '../db/repositories/leadRepo';
 import { appendEvent } from '../db/repositories/eventRepo';
 
@@ -163,8 +163,7 @@ async function scoreLeadWithAI(lead: LeadRow) {
   const message = lead.message?.trim();
   if (!message || message.length < 20) return null;
 
-  const response = await getGemini().models.generateContent({
-    model: geminiModel(),
+  const { text } = await generateWithFallback({
     contents: `You are triaging enquiries for Agriya Travels, a Chennai travel agency.
 
 Enquiry:
@@ -182,7 +181,6 @@ enquiries and unrealistic budgets should score negatively.`,
     },
   });
 
-  const text = response.text;
   if (!text) return null;
 
   const signals = JSON.parse(text) as {

@@ -1,4 +1,4 @@
-import { getGemini, geminiModel, hasGeminiKey } from '../ai/gemini';
+import { generateWithFallback, hasGeminiKey } from '../ai/gemini';
 import {
   findDestination, findTransport, findFood, findDarshan, findAccommodation,
   findPackagesForDestination, getGlobalFees, getTempleGuidance,
@@ -198,12 +198,8 @@ Strict rules:
 - If it is over budget, say so plainly in the first sentence.
 - No greeting, no sign-off, no bullet points.`;
 
-  const response = await getGemini().models.generateContent({
-    model: geminiModel(),
-    contents: prompt,
-  });
-
-  const text = response.text?.trim();
+  const { text: raw } = await generateWithFallback({ contents: prompt });
+  const text = raw.trim();
   if (!text) return option.summary;
 
   // Prompt instructions are guidance; this is the actual guard.

@@ -1,5 +1,5 @@
 import { getPool } from '../db/client';
-import { getGemini, geminiModel, hasGeminiKey } from '../ai/gemini';
+import { generateWithFallback, hasGeminiKey } from '../ai/gemini';
 
 export interface DemandRow {
   destination: string;
@@ -118,8 +118,7 @@ export async function narrateInsights(data: InsightsData): Promise<string | null
   }
 
   try {
-    const response = await getGemini().models.generateContent({
-      model: geminiModel(),
+    const { text: narrationText, model: usedModel } = await generateWithFallback({
       contents: `You advise the owner of Agriya Travels, a Chennai travel agency.
 
 Here is their enquiry data:
@@ -132,7 +131,7 @@ is too small to draw conclusions, say so plainly instead of inventing trends.
 Plain text bullets starting with "- ". No preamble.`,
     });
 
-    const narration = response.text?.trim() ?? null;
+    const narration = narrationText.trim() || null;
     if (!narration) return null;
 
     await pool.query(
@@ -143,7 +142,7 @@ Plain text bullets starting with "- ". No preamble.`,
              narration = EXCLUDED.narration,
              model = EXCLUDED.model,
              generated_at = now()`,
-      [period, JSON.stringify(data), narration, geminiModel()]
+      [period, JSON.stringify(data), narration, usedModel]
     );
 
     return narration;

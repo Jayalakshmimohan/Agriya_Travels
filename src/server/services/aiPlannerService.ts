@@ -1,5 +1,5 @@
 import { Type } from '@google/genai';
-import { getGemini, geminiModel } from '../ai/gemini';
+import { generateWithFallback } from '../ai/gemini';
 import { allPackages, type PackageRow } from '../db/repositories/packageRepo';
 import { insertTripPlan } from '../db/repositories/planRepo';
 import { appendEvent } from '../db/repositories/eventRepo';
@@ -156,15 +156,6 @@ const RESPONSE_SCHEMA = {
  * unparseable plan — the route turns that into a non-200 so the client can
  * fall back to its local template.
  */
-const RETRYABLE_STATUSES = new Set([429, 500, 502, 503, 504]);
-
-function isRetryable(err: unknown): boolean {
-  const status = (err as { status?: number })?.status;
-  return typeof status === 'number' && RETRYABLE_STATUSES.has(status);
-}
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
 /** Per-person, per-day rates used only when no real package price applies. */
 const DAY_RATE_BY_BUDGET: Record<string, number> = {
   'budget-friendly': 2500,
@@ -248,42 +239,15 @@ export async function generatePlan(
 ): Promise<GeneratedPlan> {
   const packages = await allPackages();
   const candidates = selectCandidatePackages(packages, request);
-  const model = geminiModel();
   const prompt = buildPrompt(request, candidates);
 
-  /**
-   * Gemini returns 503 "experiencing high demand" under load. That is
-   * transient, and dropping the customer to the local template over a
-   * momentary spike is a bad trade — two quick retries cost far less than a
-   * generic itinerary.
-   */
-  let response;
-  let lastErr: unknown;
-
-  for (let attempt = 0; attempt < 4; attempt++) {
-    try {
-      response = await getGemini().models.generateContent({
-        model,
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-          responseSchema: RESPONSE_SCHEMA,
-        },
-      });
-      break;
-    } catch (err) {
-      lastErr = err;
-      if (!isRetryable(err) || attempt === 3) throw err;
-      await sleep(800 * 2 ** attempt); // 0.8s, 1.6s, 3.2s
-    }
-  }
-
-  if (!response) throw lastErr ?? new Error('Gemini request failed');
-
-  const text = response.text;
-  if (!text) {
-    throw new Error('Gemini returned an empty response');
-  }
+  const { text, model, usageMetadata } = await generateWithFallback({
+    contents: prompt,
+    config: {
+      responseMimeType: 'application/json',
+      responseSchema: RESPONSE_SCHEMA,
+    },
+  });
 
   const parsed = tripPlanModelOutputSchema.safeParse(JSON.parse(text));
   if (!parsed.success) {
@@ -325,7 +289,7 @@ export async function generatePlan(
     plan: { ...plan, costBreakdown: breakdown, costBasis: basis },
     model,
     groundedPackageIds,
-    tokenUsage: response.usageMetadata ?? null,
+    tokenUsage: usageMetadata,
     isFallback: false,
   });
 
