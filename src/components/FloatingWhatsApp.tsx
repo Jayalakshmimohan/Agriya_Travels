@@ -86,7 +86,7 @@ export default function FloatingWhatsApp() {
 
   return (
     <div 
-      className="fixed bottom-[120px] lg:bottom-6 right-4 lg:right-8 z-[60]" 
+      className="fixed bottom-[144px] lg:bottom-24 left-4 lg:left-8 z-[60]" 
       ref={menuRef}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -98,7 +98,7 @@ export default function FloatingWhatsApp() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ type: "spring", bounce: 0.3 }}
-            className="absolute bottom-20 right-0 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col"
+            className="absolute bottom-20 left-0 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col"
           >
             <div className="bg-theme-navy text-white p-4 flex justify-between items-center">
               <div>
@@ -161,7 +161,7 @@ export default function FloatingWhatsApp() {
       </AnimatePresence>
 
       <div className="group flex items-center relative">
-        <div className="absolute right-full mr-4 px-3 py-1.5 bg-theme-navy text-white text-xs font-bold rounded-lg shadow-lg opacity-0 transform translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 whitespace-nowrap pointer-events-none before:content-[''] before:absolute before:top-1/2 before:-translate-y-1/2 before:left-full before:border-4 before:border-transparent before:border-l-theme-navy">
+        <div className="absolute left-full ml-4 px-3 py-1.5 bg-theme-navy text-white text-xs font-bold rounded-lg shadow-lg opacity-0 transform -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 whitespace-nowrap pointer-events-none before:content-[''] before:absolute before:top-1/2 before:-translate-y-1/2 before:right-full before:border-4 before:border-transparent before:border-r-theme-navy">
           Need help?
         </div>
         <motion.button
