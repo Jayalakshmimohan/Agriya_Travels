@@ -1,0 +1,4 @@
+{
+  "//": "The root package.json declares \"type\": \"module\", which puts Node into strict ESM resolution — and strict ESM requires file extensions on relative imports. Every import in src/server is extensionless (./routes/leads, ../../data), which tsx resolves locally and a bundler inlines, but plain Node ESM cannot. Declaring this directory as CommonJS makes Vercel's builder transpile and bundle the function instead of handing it to Node's ESM resolver, so the relative imports are inlined and resolvable. Only affects api/; server.ts still runs as ESM under tsx.",
+  "type": "commonjs"
+}
