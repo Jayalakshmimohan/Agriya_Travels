@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import {
   Send, Loader2, Sparkles, Info, AlertTriangle, CheckCircle2,
   Train, Utensils, Landmark, BedDouble, Receipt, MessageCircle, ShieldAlert,
+  MapPin, CalendarRange, Package as PackageIcon,
 } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '../data';
 
@@ -26,12 +27,32 @@ interface Option {
   cost: { lines: CostLine[]; totalInr: number; currency: string };
 }
 
+interface SuggestedPackage {
+  id: string;
+  title: string;
+  duration: string | null;
+  startingPrice: string | null;
+}
+
+interface DestinationSuggestion {
+  slug: string;
+  name: string;
+  region: string | null;
+  destinationType: string | null;
+  description: string | null;
+  score: number;
+  reasons: string[];
+  bestMonths: string[];
+  packages: SuggestedPackage[];
+}
+
 interface Reply {
   conversationId: string;
-  status: 'needs_info' | 'recommended' | 'no_options';
+  status: 'needs_info' | 'recommended' | 'suggested' | 'no_options';
   message: string;
   question?: string;
   options: Option[];
+  suggestions?: DestinationSuggestion[];
   guidance?: { title: string; dressCode: string | null; notes: string | null; source: string | null } | null;
   disclosure: string;
   confidence: string;
@@ -188,6 +209,14 @@ export default function TravelAssistantChat({ compact = false }: TravelAssistant
                     </div>
                   )}
 
+                  {turn.reply?.suggestions && turn.reply.suggestions.length > 0 && (
+                    <div className="flex flex-col gap-3 sm:pl-11">
+                      {turn.reply.suggestions.map((s, idx) => (
+                        <SuggestionCard key={s.slug} suggestion={s} isTop={idx === 0} />
+                      ))}
+                    </div>
+                  )}
+
                   {turn.reply?.guidance && (
                     <div className="sm:pl-11">
                       <div className="bg-theme-navy/5 border border-theme-border rounded-2xl p-5">
@@ -209,7 +238,7 @@ export default function TravelAssistantChat({ compact = false }: TravelAssistant
                     </div>
                   )}
 
-                  {turn.reply && turn.reply.status === 'recommended' && (
+                  {turn.reply && (turn.reply.status === 'recommended' || turn.reply.status === 'suggested') && (
                     <div className="sm:pl-11">
                       <div className="flex items-start gap-2.5 bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4">
                         <ShieldAlert className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
@@ -285,6 +314,102 @@ export default function TravelAssistantChat({ compact = false }: TravelAssistant
           <span className="hidden sm:inline">Send</span>
         </button>
       </form>
+    </div>
+  );
+}
+
+/**
+ * A destination idea, deliberately without a total price.
+ *
+ * Shows the agency's published "from" price per package but never a trip
+ * total: there are no dates and no traveller count yet, so any total would be
+ * invented. The card's job is to end with "tell me your dates".
+ */
+function SuggestionCard({
+  suggestion,
+  isTop,
+}: {
+  key?: React.Key;
+  suggestion: DestinationSuggestion;
+  isTop: boolean;
+}) {
+  return (
+    <div
+      className={`bg-theme-card border rounded-2xl p-5 transition-colors ${
+        isTop ? 'border-theme-gold' : 'border-theme-border'
+      }`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h4 className="font-bold font-serif text-theme-heading text-sm flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5 text-theme-gold shrink-0" />
+              {suggestion.name}
+            </h4>
+            {isTop && (
+              <span className="text-[9px] font-bold uppercase tracking-wider bg-theme-gold text-theme-heading px-2 py-0.5 rounded-full">
+                Closest match
+              </span>
+            )}
+          </div>
+          {suggestion.region && (
+            <p className="text-[10px] uppercase tracking-widest text-theme-muted mt-1">
+              {suggestion.region}
+            </p>
+          )}
+        </div>
+        <div className="text-right shrink-0">
+          <p className="text-lg font-bold text-theme-heading">{suggestion.score}%</p>
+          <p className="text-[9px] uppercase tracking-widest text-theme-muted">match</p>
+        </div>
+      </div>
+
+      {suggestion.description && (
+        <p className="text-[11px] text-theme-muted leading-relaxed mt-3">
+          {suggestion.description}
+        </p>
+      )}
+
+      {suggestion.reasons.length > 0 && (
+        <ul className="mt-3 flex flex-col gap-1.5">
+          {suggestion.reasons.map((reason, i) => (
+            <li key={i} className="text-[11px] text-theme-muted flex items-start gap-1.5">
+              <CheckCircle2 className="h-3 w-3 text-emerald-500 shrink-0 mt-0.5" />
+              {reason}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {suggestion.bestMonths.length > 0 && (
+        <p className="text-[10px] text-theme-muted mt-3 flex items-center gap-1.5">
+          <CalendarRange className="h-3 w-3 shrink-0" />
+          Best months: {suggestion.bestMonths.join(', ')}
+        </p>
+      )}
+
+      {suggestion.packages.length > 0 && (
+        <div className="mt-3.5 pt-3 border-t border-theme-border flex flex-col gap-2">
+          {suggestion.packages.map((p) => (
+            <div key={p.id} className="flex items-start justify-between gap-3">
+              <span className="text-[11px] text-theme-heading flex items-start gap-1.5 min-w-0">
+                <PackageIcon className="h-3 w-3 shrink-0 mt-0.5 text-theme-gold" />
+                <span>
+                  {p.title}
+                  {p.duration && (
+                    <span className="block text-theme-muted">{p.duration}</span>
+                  )}
+                </span>
+              </span>
+              {p.startingPrice && (
+                <span className="text-[11px] font-bold text-theme-heading shrink-0">
+                  from {p.startingPrice}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

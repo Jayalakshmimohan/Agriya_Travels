@@ -14,7 +14,8 @@
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
     "test": "tsx --test src/server/**/*.test.ts",
-    "doctor": "tsx src/server/scripts/doctor.ts"
+    "doctor": "tsx src/server/scripts/doctor.ts",
+    "db:link": "tsx src/server/scripts/linkPackageDestinations.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

@@ -42,6 +42,36 @@ export const travelRequirementSchema = z.object({
   accommodationPreference: z.string().max(80).nullable(),
   specialNeeds: z.string().max(600).nullable(),
   travellerExperience: z.enum(['first_time', 'experienced']).nullable(),
+
+  /**
+   * The qualitative half of a travel request.
+   *
+   * Every field above is logistics, which meant a message like "I want a slow
+   * peaceful life in a small village near snow mountains, drinking tea with
+   * locals" extracted to an entirely empty object — there was nowhere to put
+   * any of it. These fields are where the "why" lives, and they are what
+   * destination discovery scores against.
+   */
+  preferences: z.object({
+    /** calm, peaceful, slow, romantic, adventurous, spiritual, lively */
+    vibe: z.array(z.string().max(40)).default([]),
+    /** snow, mountains, beach, desert, forest, backwaters, lake */
+    landscape: z.array(z.string().max(40)).default([]),
+    /** cold, cool, warm, tropical */
+    climate: z.string().max(40).nullable(),
+    pace: z.enum(['slow', 'moderate', 'packed']).nullable(),
+    /** "tea with locals", "trekking", "temples", "photography" */
+    interests: z.array(z.string().max(60)).default([]),
+    settlement: z.enum(['village', 'small_town', 'city']).nullable(),
+  }),
+
+  /**
+   * True when the traveller asked US to choose — "suggest places", "where
+   * should I go", "recommend somewhere". Without this the assistant treats a
+   * discovery request as an incomplete booking form and asks "where would you
+   * like to travel to?", which is the wrong answer to "suggest places for me".
+   */
+  wantsSuggestions: z.boolean().default(false),
 });
 
 export type TravelRequirement = z.infer<typeof travelRequirementSchema>;
@@ -78,6 +108,29 @@ export const REQUIREMENT_RESPONSE_SCHEMA = {
     accommodationPreference: { type: 'STRING', description: 'Any hotel preference stated, or empty.' },
     specialNeeds: { type: 'STRING', description: 'Any other requirement, or empty.' },
     travellerExperience: { type: 'STRING', description: 'first_time if they say they are new to travelling, else empty.' },
+
+    vibe: {
+      type: 'ARRAY',
+      description: 'The feeling they want, in their own terms: calm, peaceful, slow, quiet, romantic, adventurous, spiritual, lively. Empty if not expressed.',
+      items: { type: 'STRING' },
+    },
+    landscape: {
+      type: 'ARRAY',
+      description: 'Scenery mentioned or clearly implied: snow, mountains, beach, desert, forest, backwaters, lake, valley. Empty if none.',
+      items: { type: 'STRING' },
+    },
+    climate: { type: 'STRING', description: 'cold, cool, warm or tropical if expressed, else empty.' },
+    pace: { type: 'STRING', description: 'slow, moderate or packed if expressed, else empty.' },
+    interests: {
+      type: 'ARRAY',
+      description: 'Specific things they want to do, in short phrases: "tea with locals", "trekking", "temples", "photography", "homestay". Empty if none.',
+      items: { type: 'STRING' },
+    },
+    settlement: { type: 'STRING', description: 'village, small_town or city if they said what size of place they want, else empty.' },
+    wantsSuggestions: {
+      type: 'STRING',
+      description: '"true" if they are asking US to suggest or recommend destinations, or asking where they should go. "false" if they already named where they are going.',
+    },
   },
   required: ['origin', 'destination', 'travelDate', 'needs'],
 };
@@ -88,6 +141,32 @@ export interface ClarifyingQuestion {
   question: string;
   /** Blocking questions stop the quote; non-blocking merely improve it. */
   blocking: boolean;
+}
+
+/** How much qualitative signal the message carried. */
+export function preferenceSignalCount(req: TravelRequirement): number {
+  const p = req.preferences;
+  return (
+    p.vibe.length +
+    p.landscape.length +
+    p.interests.length +
+    (p.climate ? 1 : 0) +
+    (p.pace ? 1 : 0) +
+    (p.settlement ? 1 : 0)
+  );
+}
+
+/**
+ * A request to be told where to go, rather than to be quoted for a known trip.
+ *
+ * Either they asked explicitly, or they described what they want without ever
+ * naming a place. Both cases must skip the logistics questions: asking for a
+ * travel date before suggesting anywhere is putting the form before the
+ * conversation.
+ */
+export function isDiscoveryRequest(req: TravelRequirement): boolean {
+  if (req.destination) return false;
+  return req.wantsSuggestions || preferenceSignalCount(req) >= 2;
 }
 
 export function totalTravellers(req: TravelRequirement): number | null {
@@ -105,6 +184,10 @@ export function totalTravellers(req: TravelRequirement): number | null {
  */
 export function findMissingRequirements(req: TravelRequirement): ClarifyingQuestion[] {
   const questions: ClarifyingQuestion[] = [];
+
+  // Discovery answers with suggestions, not a quote, so none of the logistics
+  // fields are required yet. Dates and headcount come after they pick a place.
+  if (isDiscoveryRequest(req)) return questions;
 
   if (!req.destination) {
     questions.push({

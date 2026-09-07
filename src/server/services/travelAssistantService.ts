@@ -9,8 +9,12 @@ import {
   type CostInput, type CostBreakdown, type FeeRule, type ConfidenceLevel,
 } from './costEstimationService';
 import {
-  findMissingRequirements, totalTravellers, type TravelRequirement,
+  findMissingRequirements, totalTravellers, isDiscoveryRequest,
+  type TravelRequirement,
 } from '../schemas/travelRequirement';
+import {
+  discoverDestinations, type DestinationSuggestion,
+} from './destinationDiscoveryService';
 import { extractRequirements } from './requirementExtractionService';
 import {
   createConversation, findConversation, saveRequirements, appendMessage,
@@ -36,11 +40,17 @@ export interface AssistantOption {
 
 export interface AssistantReply {
   conversationId: string;
-  status: 'needs_info' | 'recommended' | 'no_options';
+  status: 'needs_info' | 'recommended' | 'suggested' | 'no_options';
   message: string;
   question?: string;
   requirement: TravelRequirement;
   options: AssistantOption[];
+  /**
+   * Destination ideas for a "where should I go?" request. Deliberately
+   * unpriced — there are no dates or traveller counts yet, so any figure
+   * would be invented.
+   */
+  suggestions?: DestinationSuggestion[];
   guidance?: { title: string; dressCode: string | null; notes: string | null; source: string | null } | null;
   disclosure: string;
   confidence: ConfidenceLevel;
@@ -210,6 +220,51 @@ Strict rules:
   return text;
 }
 
+/** Neutral fallback when Gemini is unavailable — still specific and useful. */
+function summariseSuggestions(suggestions: DestinationSuggestion[]): string {
+  const names = suggestions.map((s) => s.name);
+  const list =
+    names.length === 1
+      ? names[0]
+      : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+  return `Based on what you described, ${list} look like the closest matches in our range.`;
+}
+
+async function explainSuggestions(
+  suggestions: DestinationSuggestion[],
+  req: TravelRequirement
+): Promise<string> {
+  const prompt = `You are a travel consultant at Agriya Travels in Chennai.
+
+A traveller described the kind of trip they want, without naming a place:
+${JSON.stringify(req.preferences, null, 2)}
+
+Our system matched these destinations from the agency's own catalogue. The
+names, prices and reasons are final — they came from our database:
+
+${JSON.stringify(
+  suggestions.map((s) => ({
+    name: s.name,
+    region: s.region,
+    why: s.reasons,
+    bestMonths: s.bestMonths,
+    packages: s.packages.map((p) => ({ title: p.title, from: p.startingPrice, duration: p.duration })),
+  })),
+  null, 2
+)}
+
+Write 2-4 warm sentences introducing these as ideas. Name them.
+
+Strict rules:
+- Only mention destinations and prices from the data above. Invent nothing.
+- Do NOT state a total trip cost — we have no dates or traveller count yet.
+- End by asking for their travel dates and how many people are going.
+- No greeting, no sign-off, no bullet points.`;
+
+  const { text } = await generateWithFallback({ contents: prompt });
+  return text.trim() || summariseSuggestions(suggestions);
+}
+
 export async function handleMessage(args: {
   message: string;
   conversationId?: string | null;
@@ -233,7 +288,63 @@ export async function handleMessage(args: {
     conversation.extracted_requirements ?? null
   );
 
-  // 2. Ask before guessing.
+  // 2. "Where should I go?" is a different question from "what does this
+  //    cost?", and answering it with "where would you like to travel to?" is
+  //    the wrong reply to "suggest places for me".
+  if (isDiscoveryRequest(requirement)) {
+    const suggestions = await discoverDestinations(requirement);
+
+    if (suggestions.length === 0) {
+      const msg =
+        "I could not match that to anywhere in our current destinations. Tell me a little more — the kind of scenery, climate or pace you have in mind — or name a place and I will price it for you.";
+      await saveRequirements(conversation.id, requirement, 'gathering');
+      await appendMessage({
+        conversationId: conversation.id, role: 'assistant', content: msg,
+        extracted: requirement, model, tokenUsage,
+      });
+      return {
+        conversationId: conversation.id, status: 'no_options', message: msg,
+        requirement, options: [], suggestions: [],
+        disclosure: disclosureFor('ILLUSTRATIVE'), confidence: 'ILLUSTRATIVE',
+      };
+    }
+
+    let message = summariseSuggestions(suggestions);
+    if (hasGeminiKey()) {
+      try {
+        message = await explainSuggestions(suggestions, requirement);
+      } catch (err) {
+        console.warn('Suggestion narration unavailable:', (err as Error).message);
+      }
+    }
+
+    await saveRequirements(conversation.id, requirement, 'recommended');
+    await appendMessage({
+      conversationId: conversation.id, role: 'assistant', content: message,
+      extracted: requirement,
+      retrievedIds: {
+        destinations: suggestions.map((s) => s.slug),
+        packages: suggestions.flatMap((s) => s.packages.map((p) => p.id)),
+      },
+      model, tokenUsage,
+    });
+
+    return {
+      conversationId: conversation.id,
+      status: 'suggested',
+      message,
+      requirement,
+      options: [],
+      suggestions,
+      // Package prices are the agency's own published figures, so this is not
+      // demo inventory — but nothing here is a bookable quote either.
+      disclosure:
+        'These are destination ideas with our published starting prices. Tell me your dates and how many are travelling and I can work out a full cost.',
+      confidence: 'INDICATIVE',
+    };
+  }
+
+  // 3. Otherwise it is a quote request — ask before guessing.
   const missing = findMissingRequirements(requirement);
   const blocking = missing.filter((m) => m.blocking);
 
