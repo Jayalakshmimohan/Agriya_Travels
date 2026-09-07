@@ -16,12 +16,20 @@ export function getPool(): Pool {
     throw new Error('DATABASE_URL is not set. Add it to your .env file.');
   }
 
+  // Serverless changes the arithmetic completely. Each concurrent invocation
+  // is its own container with its own pool, so a max of 10 there means 10
+  // sockets per instance against Neon's connection ceiling. One is correct:
+  // a single invocation only ever serves one request.
+  const serverless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+
   pool = new Pool({
     connectionString,
     ssl: true,                      // Neon rejects unencrypted connections
-    max: 10,
-    idleTimeoutMillis: 30_000,
+    max: serverless ? 1 : 10,
+    idleTimeoutMillis: serverless ? 5_000 : 30_000,
     connectionTimeoutMillis: 10_000,
+    // Let a frozen container's socket die rather than be reused when thawed.
+    ...(serverless ? { allowExitOnIdle: true } : {}),
   });
 
   // A pool-level error must never take the process down.
