@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import FloatingWhatsApp from './FloatingWhatsApp';
+import FloatingAssistant from './FloatingAssistant';
 import QuickQuoteModal from './QuickQuoteModal';
 import BackToTopButton from './BackToTopButton';
 import { CurrencyProvider } from '../context/CurrencyContext';
@@ -27,6 +28,7 @@ export default function Layout({ children }: LayoutProps) {
           </main>
           <Footer />
           <FloatingWhatsApp />
+          <FloatingAssistant />
           <QuickQuoteModal />
           <BackToTopButton />
         </div>

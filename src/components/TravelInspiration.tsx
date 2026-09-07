@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, HelpCircle, Compass, RotateCw, MapPin, Users, Calendar, CloudSun, Thermometer, Shirt, Phone, CheckCircle2, Download, Check, AlertCircle, Heart } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '../data';
+import { recordLead } from '../lib/leads';
 import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
 
@@ -187,6 +188,18 @@ export default function TravelInspiration() {
   const handleGenerateTailored = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedDest) return;
+
+    // Anonymous demand signal — no contact details are collected here either.
+    recordLead({
+      source: 'inspiration',
+      destination: selectedDest.name,
+      startingCity: formData.startCity,
+      durationDays: formData.days,
+      travellers: formData.persons,
+      budget: formData.budget,
+      message: formData.specialRequests,
+    });
+
     setIsTailoring(true);
     setTailoredResult(null);
 
