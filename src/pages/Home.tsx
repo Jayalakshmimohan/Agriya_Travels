@@ -3,7 +3,6 @@ import useEmblaCarousel from 'embla-carousel-react';
 import Hero from '../components/Hero';
 import PackageCard from '../components/PackageCard';
 import TestimonialCard from '../components/TestimonialCard';
-import AITripPlanner from '../components/AITripPlanner';
 import FAQSection from '../components/FAQSection';
 import SEO from '../components/SEO';
 import { tourPackages, testimonials, WHATSAPP_NUMBER } from '../data';
@@ -135,28 +134,24 @@ export default function Home() {
 
         <aside className="lg:col-span-4 flex flex-col gap-6">
           <div className="lg:sticky lg:top-24 flex flex-col gap-6 lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto custom-scrollbar pr-1 pb-32">
-            <div className="shrink-0 w-full h-[540px]">
-              <AITripPlanner />
-            </div>
-
             {/* Travel Inspiration Feature Card */}
             <div className="bg-gradient-to-br from-theme-navy to-[#1a3040] text-white rounded-3xl p-6 shadow-xl border border-theme-teal/30 relative overflow-hidden group shrink-0">
               <div className="absolute top-[-20%] right-[-20%] w-32 h-32 bg-theme-gold/15 rounded-full blur-xl pointer-events-none" />
               <div className="relative z-10 flex flex-col gap-4">
                 <span className="text-[9px] font-bold uppercase tracking-widest text-theme-gold flex items-center gap-1.5 bg-white/5 py-1 px-2.5 rounded-full border border-white/10 self-start">
-                  <Compass className="h-3 w-3 animate-spin" style={{ animationDuration: '6s' }} /> Can't decide where to go?
+                  <Compass className="h-3 w-3 animate-spin" style={{ animationDuration: '6s' }} /> Not sure where to start?
                 </span>
                 <div>
-                  <h4 className="font-serif font-bold text-lg leading-snug">Travel Inspiration Hub</h4>
+                  <h4 className="font-serif font-bold text-lg leading-snug">Plan Your Trip with AI</h4>
                   <p className="text-[11px] text-slate-300 font-light leading-relaxed mt-1">
-                    Feeling adventurous but don't know where to start? Let destiny choose or browse premium handpicked secret getaways.
+                    Describe the trip you have in mind and we'll suggest destinations, build a day-by-day itinerary, and work out the cost.
                   </p>
                 </div>
                 <a
-                  href="/ai-planner?tab=inspiration"
+                  href="/ai-planner"
                   className="bg-theme-gold hover:bg-[#ebd074] text-theme-heading text-xs font-bold py-3 px-5 rounded-xl transition-all hover:-translate-y-0.5 text-center shadow-lg shadow-theme-gold/10"
                 >
-                  Spin the Wheel of Destiny &rarr;
+                  Open the Trip Planner &rarr;
                 </a>
               </div>
             </div>
