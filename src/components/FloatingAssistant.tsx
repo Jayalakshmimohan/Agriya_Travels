@@ -6,10 +6,12 @@ import TravelAssistantChat from './TravelAssistantChat';
 /**
  * Site-wide travel assistant, reachable from every page.
  *
- * Sits on the LEFT above Quick Quote rather than bottom-right: the right rail
- * already carries the WhatsApp bubble and the back-to-top button, and two chat
- * bubbles side by side reads as a mistake. Keeping the AI on the opposite side
- * also separates it from the "talk to a human" channel.
+ * Bottom-right, because that is where people look for a chat launcher. An
+ * earlier version put it bottom-left to avoid sitting beside the WhatsApp
+ * bubble, which was tidy and wrong — someone hunting for "the chatbot" checks
+ * one corner, does not find it, and concludes there isn't one. WhatsApp moved
+ * to the left instead: discoverability of the primary entry point beats
+ * symmetry between two secondary ones.
  */
 export default function FloatingAssistant() {
   const [isOpen, setIsOpen] = useState(false);
@@ -54,7 +56,7 @@ export default function FloatingAssistant() {
               aria-label="Agriya travel assistant"
               className="fixed z-[70] flex flex-col overflow-hidden rounded-3xl border border-theme-border bg-theme-bg shadow-2xl
                          inset-x-3 bottom-3 top-16
-                         sm:inset-x-auto sm:top-auto sm:left-8 sm:bottom-44 sm:w-[420px] sm:h-[min(600px,68vh)]"
+                         sm:inset-x-auto sm:top-auto sm:right-8 sm:bottom-44 sm:w-[420px] sm:h-[min(600px,68vh)]"
             >
               <header className="flex items-center justify-between gap-3 bg-theme-navy px-5 py-4 text-white shrink-0">
                 <div className="flex items-center gap-3">
@@ -87,9 +89,9 @@ export default function FloatingAssistant() {
       </AnimatePresence>
 
       {/* Launcher */}
-      <div className="fixed bottom-[144px] lg:bottom-24 left-4 lg:left-8 z-[60] group">
+      <div className="fixed bottom-[120px] lg:bottom-6 right-4 lg:right-8 z-[60] group">
         {!isOpen && !hasOpened && (
-          <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-theme-navy text-white text-xs font-bold rounded-lg shadow-lg opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 whitespace-nowrap pointer-events-none">
+          <div className="absolute right-full mr-4 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-theme-navy text-white text-xs font-bold rounded-lg shadow-lg opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 whitespace-nowrap pointer-events-none">
             Plan a trip with AI
           </div>
         )}

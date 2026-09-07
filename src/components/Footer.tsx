@@ -29,13 +29,13 @@ export default function Footer() {
               Your trusted premium travel partner in Chennai. Specializing in India tours, international holidays, pilgrimage trips, and luxury vacations.
             </p>
             <div className="flex space-x-6">
-              <a href="#" className="text-slate-400 hover:text-theme-gold transition-colors" aria-label="Facebook">
+              <a href="#" className="text-slate-400 hover:text-theme-gold transition-colors flex h-11 w-11 items-center justify-center -m-1.5 md:h-auto md:w-auto md:m-0" aria-label="Facebook">
                 <Facebook className="h-4 w-4" />
               </a>
-              <a href="#" className="text-slate-400 hover:text-theme-gold transition-colors" aria-label="Instagram">
+              <a href="#" className="text-slate-400 hover:text-theme-gold transition-colors flex h-11 w-11 items-center justify-center -m-1.5 md:h-auto md:w-auto md:m-0" aria-label="Instagram">
                 <Instagram className="h-4 w-4" />
               </a>
-              <a href="#" className="text-slate-400 hover:text-theme-gold transition-colors" aria-label="Twitter">
+              <a href="#" className="text-slate-400 hover:text-theme-gold transition-colors flex h-11 w-11 items-center justify-center -m-1.5 md:h-auto md:w-auto md:m-0" aria-label="Twitter">
                 <Twitter className="h-4 w-4" />
               </a>
             </div>
@@ -45,20 +45,20 @@ export default function Footer() {
               <div>
                 <h3 className="text-[10px] font-bold text-theme-heading uppercase tracking-widest">Quick Links</h3>
                 <ul role="list" className="mt-4 space-y-3">
-                  <li><a href="/about" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">About Us</a></li>
-                  <li><a href="/india-tours" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">India Tours</a></li>
-                  <li><a href="/international-tours" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">International Packages</a></li>
-                  <li><a href="/ai-planner" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Trip Planner</a></li>
-                  <li><a href="/gallery" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Gallery</a></li>
+                  <li><a href="/about" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors block py-3 md:py-1">About Us</a></li>
+                  <li><a href="/india-tours" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors block py-3 md:py-1">India Tours</a></li>
+                  <li><a href="/international-tours" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors block py-3 md:py-1">International Packages</a></li>
+                  <li><a href="/ai-planner" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors block py-3 md:py-1">Trip Planner</a></li>
+                  <li><a href="/gallery" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors block py-3 md:py-1">Gallery</a></li>
                 </ul>
               </div>
               <div className="mt-10 md:mt-0">
                 <h3 className="text-[10px] font-bold text-theme-heading uppercase tracking-widest">Services</h3>
                 <ul role="list" className="mt-4 space-y-3">
-                  <li><a href="/theme-tours" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Theme-Based Tours</a></li>
-                  <li><a href="/rentals" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Premium Transfers</a></li>
-                  <li><a href="/corporate" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Corporate Travel</a></li>
-                  <li><a href="/contact" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors">Contact Support</a></li>
+                  <li><a href="/theme-tours" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors block py-3 md:py-1">Theme-Based Tours</a></li>
+                  <li><a href="/rentals" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors block py-3 md:py-1">Premium Transfers</a></li>
+                  <li><a href="/corporate" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors block py-3 md:py-1">Corporate Travel</a></li>
+                  <li><a href="/contact" className="text-xs font-light text-theme-muted hover:text-theme-heading transition-colors block py-3 md:py-1">Contact Support</a></li>
                 </ul>
               </div>
             </div>

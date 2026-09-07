@@ -136,7 +136,7 @@ export default function TravelTipsTrends() {
               key={cat}
               type="button"
               onClick={() => setActiveCategory(cat)}
-              className={`px-3 py-1 text-xs font-medium rounded-full transition-all cursor-pointer ${
+              className={`px-3.5 py-2.5 sm:py-1 text-xs font-medium rounded-full transition-all cursor-pointer ${
                 isActive
                   ? 'bg-theme-gold text-slate-950 font-bold shadow-sm'
                   : 'bg-theme-navy/5 dark:bg-[#122238] text-theme-muted hover:text-theme-heading hover:bg-theme-navy/10 dark:hover:bg-[#182e4a] border border-theme-border/40'
@@ -205,7 +205,7 @@ export default function TravelTipsTrends() {
                     href={item.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-theme-gold hover:text-theme-teal dark:hover:text-white font-bold flex items-center gap-1 transition-all"
+                    className="text-theme-gold hover:text-theme-teal dark:hover:text-white font-bold inline-flex items-center gap-1 transition-all py-2 sm:py-0"
                     id={`news-link-${index}`}
                   >
                     View Source <ExternalLink className="h-2.5 w-2.5" />

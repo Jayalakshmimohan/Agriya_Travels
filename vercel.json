@@ -5,6 +5,10 @@
   "framework": null,
   "rewrites": [
     {
+      "source": "/api/health",
+      "destination": "/api/health"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/index"
     }
@@ -13,6 +17,9 @@
     "api/index.ts": {
       "maxDuration": 60,
       "memory": 1024
+    },
+    "api/health.ts": {
+      "maxDuration": 10
     }
   },
   "headers": [
