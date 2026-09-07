@@ -19,6 +19,7 @@ import { extractRequirements } from './requirementExtractionService';
 import {
   createConversation, findConversation, saveRequirements, appendMessage,
 } from '../db/repositories/conversationRepo';
+import { handOffToTeam, type HandoffResult } from './handoffService';
 
 export interface AssistantOption {
   id: string;
@@ -40,7 +41,7 @@ export interface AssistantOption {
 
 export interface AssistantReply {
   conversationId: string;
-  status: 'needs_info' | 'recommended' | 'suggested' | 'no_options';
+  status: 'needs_info' | 'recommended' | 'suggested' | 'no_options' | 'handed_off';
   message: string;
   question?: string;
   requirement: TravelRequirement;
@@ -54,6 +55,8 @@ export interface AssistantReply {
   guidance?: { title: string; dressCode: string | null; notes: string | null; source: string | null } | null;
   disclosure: string;
   confidence: ConfidenceLevel;
+  /** Present once the enquiry has been recorded for the team. */
+  handoff?: HandoffResult;
 }
 
 const money = (n: number) =>
@@ -288,7 +291,72 @@ export async function handleMessage(args: {
     conversation.extracted_requirements ?? null
   );
 
-  // 2. "Where should I go?" is a different question from "what does this
+  // 2. Handoff takes priority over everything else.
+  //
+  //    Previously, offering to "pass your requirements on" and then getting
+  //    "yes" simply re-ran extraction, hit the same dead end and repeated the
+  //    question. The conversation had no memory of having asked. Two states
+  //    fix it: we either need their number, or we have it and can act.
+  const wantsHandoff =
+    requirement.handoffRequested || conversation.status === 'awaiting_contact';
+
+  if (wantsHandoff) {
+    if (requirement.contact.phone) {
+      const handoff = await handOffToTeam({
+        requirement,
+        conversationId: conversation.id,
+      });
+
+      const name = requirement.contact.name ? `, ${requirement.contact.name}` : '';
+      const message =
+        `Done${name} — I've recorded everything for our team and they'll be in touch on ` +
+        `${requirement.contact.phone}. Tap below to send it straight to us on WhatsApp too, ` +
+        `so you have the conversation on your phone.`;
+
+      await saveRequirements(conversation.id, requirement, 'handed_off');
+      await appendMessage({
+        conversationId: conversation.id, role: 'assistant', content: message,
+        extracted: requirement, retrievedIds: { leadId: handoff.leadId },
+        model, tokenUsage,
+      });
+
+      return {
+        conversationId: conversation.id,
+        status: 'handed_off',
+        message,
+        requirement,
+        options: [],
+        handoff,
+        disclosure:
+          'Our team will confirm real availability and pricing with you directly.',
+        confidence: 'INDICATIVE',
+      };
+    }
+
+    // Ask once, and remember that we asked.
+    const question = requirement.contact.name
+      ? `Thanks ${requirement.contact.name} — what's the best mobile number for our team to reach you on?`
+      : "Happy to pass this on. What's your name and mobile number?";
+
+    await saveRequirements(conversation.id, requirement, 'awaiting_contact');
+    await appendMessage({
+      conversationId: conversation.id, role: 'assistant', content: question,
+      extracted: requirement, model, tokenUsage,
+    });
+
+    return {
+      conversationId: conversation.id,
+      status: 'needs_info',
+      message: question,
+      question,
+      requirement,
+      options: [],
+      disclosure: 'We only use your number to discuss this enquiry.',
+      confidence: 'INDICATIVE',
+    };
+  }
+
+  // 3. "Where should I go?" is a different question from "what does this
   //    cost?", and answering it with "where would you like to travel to?" is
   //    the wrong reply to "suggest places for me".
   if (isDiscoveryRequest(requirement)) {
@@ -344,7 +412,35 @@ export async function handleMessage(args: {
     };
   }
 
-  // 3. Otherwise it is a quote request — ask before guessing.
+  // 4. If they named somewhere we do not cover, say so NOW.
+  //
+  //    This check used to sit after the logistics questions, so someone asking
+  //    for the Amazon was walked through origin, date and headcount before
+  //    being told we cannot price it. Three pointless questions, then a dead
+  //    end. Coverage is knowable from the first message; check it first.
+  if (requirement.destination) {
+    const named = await findDestination(requirement.destination);
+    if (!named) {
+      const msg =
+        `We don't have ${requirement.destination} in our own destinations yet, so I can't price it here. ` +
+        `Our team plans custom trips like this all the time though — say "yes" and I'll take your name ` +
+        `and number and pass everything you've told me straight to them.`;
+
+      await saveRequirements(conversation.id, requirement, 'gathering');
+      await appendMessage({
+        conversationId: conversation.id, role: 'assistant', content: msg,
+        extracted: requirement, model, tokenUsage,
+      });
+      return {
+        conversationId: conversation.id, status: 'no_options', message: msg,
+        requirement, options: [],
+        disclosure: 'Nothing is quoted or reserved until our team confirms with you.',
+        confidence: 'ILLUSTRATIVE',
+      };
+    }
+  }
+
+  // 5. Otherwise it is a quote request — ask before guessing.
   const missing = findMissingRequirements(requirement);
   const blocking = missing.filter((m) => m.blocking);
 
@@ -374,16 +470,8 @@ export async function handleMessage(args: {
     findDestination(requirement.destination!),
   ]);
 
-  if (!targetDest) {
-    const msg = `We don't yet cover ${requirement.destination} in our travel data. Our team can still plan it for you — shall I pass your requirements on?`;
-    await saveRequirements(conversation.id, requirement, 'gathering');
-    await appendMessage({ conversationId: conversation.id, role: 'assistant', content: msg });
-    return {
-      conversationId: conversation.id, status: 'no_options', message: msg,
-      requirement, options: [], disclosure: disclosureFor('ILLUSTRATIVE'),
-      confidence: 'ILLUSTRATIVE',
-    };
-  }
+  // Step 4 already established the destination exists.
+  if (!targetDest) throw new Error('Destination vanished between lookups');
 
   const pax = totalTravellers(requirement) ?? 1;
   const date = requirement.travelDate!;

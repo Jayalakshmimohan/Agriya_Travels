@@ -21,6 +21,8 @@ const EMPTY: TravelRequirement = {
   specialNeeds: null, travellerExperience: null,
   preferences: { vibe: [], landscape: [], climate: null, pace: null, interests: [], settlement: null },
   wantsSuggestions: false,
+  contact: { name: null, phone: null, email: null },
+  handoffRequested: false,
 };
 
 const str = (v: unknown): string | null => {
@@ -79,6 +81,10 @@ Rules:
   them loses the entire request when someone has not named a place.
 - Set wantsSuggestions to "true" when they are asking us to choose — "suggest
   places", "where should I go", "recommend somewhere for this".
+- Set handoffRequested to "true" if they want a human to contact them, or if
+  they are agreeing to an offer to pass their requirements to the team. A bare
+  "yes", "ok", "sure" or "please do" counts as agreement.
+- Capture contactName / contactPhone / contactEmail whenever they give them.
 - Never assume the number of travellers. "I want to go" does not mean one person — leave adults empty unless a count or a clear singular like "just me" is given.
 - budgetBasis must be "unknown" unless the traveller explicitly said total or per person.
 - Put things stated as required in needs, and things phrased as "if possible" or "maybe" in optionalNeeds.
@@ -181,6 +187,19 @@ export async function extractRequirements(
       str(raw.wantsSuggestions)?.toLowerCase() === 'true'
         ? true
         : previous?.wantsSuggestions ?? false,
+
+    contact: {
+      name: str(raw.contactName) ?? previous?.contact.name ?? null,
+      phone: str(raw.contactPhone)?.replace(/[^\d+]/g, '') ?? previous?.contact.phone ?? null,
+      email: str(raw.contactEmail) ?? previous?.contact.email ?? null,
+    },
+
+    // Sticky once true: agreeing to a handoff should not be forgotten because
+    // the next message happens to be just a phone number.
+    handoffRequested:
+      str(raw.handoffRequested)?.toLowerCase() === 'true'
+        ? true
+        : previous?.handoffRequested ?? false,
   };
 
   // Re-validate our own coercion; a bug here would silently corrupt a quote.

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import {
   Send, Loader2, Sparkles, Info, AlertTriangle, CheckCircle2,
   Train, Utensils, Landmark, BedDouble, Receipt, MessageCircle, ShieldAlert,
-  MapPin, CalendarRange, Package as PackageIcon,
+  MapPin, CalendarRange, Package as PackageIcon, Check, ClipboardList,
 } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '../data';
 
@@ -46,13 +46,21 @@ interface DestinationSuggestion {
   packages: SuggestedPackage[];
 }
 
+interface Handoff {
+  leadId: string;
+  summary: string;
+  whatsappUrl: string;
+  contactMissing: boolean;
+}
+
 interface Reply {
   conversationId: string;
-  status: 'needs_info' | 'recommended' | 'suggested' | 'no_options';
+  status: 'needs_info' | 'recommended' | 'suggested' | 'no_options' | 'handed_off';
   message: string;
   question?: string;
   options: Option[];
   suggestions?: DestinationSuggestion[];
+  handoff?: Handoff;
   guidance?: { title: string; dressCode: string | null; notes: string | null; source: string | null } | null;
   disclosure: string;
   confidence: string;
@@ -217,6 +225,42 @@ export default function TravelAssistantChat({ compact = false }: TravelAssistant
                     </div>
                   )}
 
+                  {turn.reply?.handoff && (
+                    <div className="sm:pl-11 flex flex-col gap-3">
+                      <div className="bg-emerald-500/10 border border-emerald-500/25 rounded-2xl p-4">
+                        <p className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+                          <Check className="h-3.5 w-3.5" />
+                          Enquiry #{turn.reply.handoff.leadId} recorded for our team
+                        </p>
+                        {turn.reply.handoff.contactMissing && (
+                          <p className="text-[11px] text-amber-700 dark:text-amber-300 mt-1.5">
+                            We don't have a number for you yet, so do send the message below —
+                            otherwise we have no way to reply.
+                          </p>
+                        )}
+                      </div>
+
+                      <details className="bg-theme-bg border border-theme-border rounded-2xl overflow-hidden">
+                        <summary className="cursor-pointer px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-theme-gold flex items-center gap-1.5">
+                          <ClipboardList className="h-3 w-3" /> What we're sending
+                        </summary>
+                        <pre className="px-4 pb-4 text-[10px] text-theme-muted whitespace-pre-wrap font-sans leading-relaxed">
+                          {turn.reply.handoff.summary}
+                        </pre>
+                      </details>
+
+                      <a
+                        href={turn.reply.handoff.whatsappUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 bg-[#25D366] text-white py-3.5 rounded-2xl font-bold text-xs"
+                      >
+                        <MessageCircle className="h-4 w-4 fill-current" />
+                        Send this to Agriya on WhatsApp
+                      </a>
+                    </div>
+                  )}
+
                   {turn.reply?.guidance && (
                     <div className="sm:pl-11">
                       <div className="bg-theme-navy/5 border border-theme-border rounded-2xl p-5">
@@ -238,7 +282,7 @@ export default function TravelAssistantChat({ compact = false }: TravelAssistant
                     </div>
                   )}
 
-                  {turn.reply && (turn.reply.status === 'recommended' || turn.reply.status === 'suggested') && (
+                  {turn.reply && (turn.reply.status === 'recommended' || turn.reply.status === 'suggested') && !turn.reply.handoff && (
                     <div className="sm:pl-11">
                       <div className="flex items-start gap-2.5 bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4">
                         <ShieldAlert className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />

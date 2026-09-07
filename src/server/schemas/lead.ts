@@ -57,7 +57,7 @@ function optional<T extends z.ZodTypeAny>(schema: T) {
 
 export const leadInputSchema = z
   .object({
-    source: z.enum(['contact_form', 'quick_quote', 'trip_planner', 'inspiration']),
+    source: z.enum(['contact_form', 'quick_quote', 'trip_planner', 'inspiration', 'assistant']),
     focus: z.enum(['general', 'rentals', 'corporate']).optional(),
     pagePath: optional(text.max(200)),
 

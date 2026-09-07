@@ -2,7 +2,10 @@ import { getPool } from '../client';
 import type { TravelRequirement } from '../../schemas/travelRequirement';
 
 export type ConversationStatus =
-  | 'gathering' | 'ready' | 'recommended' | 'handed_off' | 'abandoned';
+  | 'gathering'
+  /** Offered to pass it to the team; waiting on a name and number. */
+  | 'awaiting_contact'
+  | 'ready' | 'recommended' | 'handed_off' | 'abandoned';
 
 export interface ConversationRow {
   id: string;

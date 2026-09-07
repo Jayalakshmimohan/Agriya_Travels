@@ -72,6 +72,22 @@ export const travelRequirementSchema = z.object({
    * like to travel to?", which is the wrong answer to "suggest places for me".
    */
   wantsSuggestions: z.boolean().default(false),
+
+  /**
+   * Who to call back.
+   *
+   * The assistant had no fields for this, so it could offer to "pass your
+   * requirements on" and then had nothing to pass them to. A handoff without
+   * a phone number is not a handoff.
+   */
+  contact: z.object({
+    name: z.string().max(60).nullable(),
+    phone: z.string().max(24).nullable(),
+    email: z.string().max(120).nullable(),
+  }),
+
+  /** They asked to be contacted, or agreed when we offered. */
+  handoffRequested: z.boolean().default(false),
 });
 
 export type TravelRequirement = z.infer<typeof travelRequirementSchema>;
@@ -130,6 +146,13 @@ export const REQUIREMENT_RESPONSE_SCHEMA = {
     wantsSuggestions: {
       type: 'STRING',
       description: '"true" if they are asking US to suggest or recommend destinations, or asking where they should go. "false" if they already named where they are going.',
+    },
+    contactName: { type: 'STRING', description: 'Their own name if they give it, else empty.' },
+    contactPhone: { type: 'STRING', description: 'Their mobile number if they give it, digits and + only, else empty.' },
+    contactEmail: { type: 'STRING', description: 'Their email if they give it, else empty.' },
+    handoffRequested: {
+      type: 'STRING',
+      description: '"true" if they are asking to be contacted by the team, asking someone to call them, or agreeing to an offer to pass their requirements on (including a bare "yes", "ok", "sure", "please do"). Otherwise "false".',
     },
   },
   required: ['origin', 'destination', 'travelDate', 'needs'],

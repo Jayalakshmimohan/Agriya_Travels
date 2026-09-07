@@ -109,6 +109,7 @@ export function scoreLeadRules(lead: LeadRow): ScoreBreakdown {
 
   // 5. Which form they used says a lot about intent.
   const intentBySource: Record<string, [number, string]> = {
+    assistant: [16, 'Worked through the AI assistant and asked to be contacted'],
     contact_form: [15, 'Used the full enquiry form'],
     trip_planner: [12, 'Built a custom itinerary'],
     quick_quote: [8, 'Quick quote request'],
