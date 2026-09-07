@@ -155,7 +155,7 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-4">
           <button 
             onClick={() => setIsSearchOpen(true)} 
-            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors cursor-pointer"
+            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors cursor-pointer min-h-10 min-w-10"
             aria-label="Search Packages"
           >
             <Search className="h-5 w-5" />
@@ -182,7 +182,7 @@ export default function Header() {
 
           <button 
             onClick={toggleTheme} 
-            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors cursor-pointer"
+            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors cursor-pointer min-h-10 min-w-10"
             aria-label="Toggle Theme"
           >
             {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
@@ -203,7 +203,7 @@ export default function Header() {
         <div className="flex items-center gap-1 sm:gap-2 lg:hidden">
           <button 
             onClick={() => setIsSearchOpen(true)} 
-            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors cursor-pointer"
+            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors cursor-pointer min-h-10 min-w-10"
             aria-label="Search Packages"
           >
             <Search className="h-5 w-5" />
@@ -221,7 +221,7 @@ export default function Header() {
           
           <button 
             onClick={toggleTheme} 
-            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors cursor-pointer"
+            className="p-2 text-theme-muted hover:text-theme-heading rounded-full hover:bg-theme-border transition-colors cursor-pointer min-h-10 min-w-10"
             aria-label="Toggle Theme"
           >
             {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}

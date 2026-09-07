@@ -130,7 +130,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' 
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsQuickViewOpen(true)}
-              className="flex items-center gap-1.5 bg-theme-navy/5 dark:bg-white/10 text-theme-navy dark:text-slate-200 px-4 py-2.5 rounded-full text-[11px] font-bold hover:bg-theme-navy/10 dark:hover:bg-white/15 transition-colors"
+              className="flex items-center gap-1.5 bg-theme-navy/5 dark:bg-white/10 text-theme-navy dark:text-slate-200 px-4 py-3 sm:py-2.5 rounded-full text-[11px] font-bold hover:bg-theme-navy/10 dark:hover:bg-white/15 transition-colors"
             >
               Quick View
             </button>
@@ -138,7 +138,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ pkg, displayCurrency = 'INR' 
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 bg-theme-navy text-theme-gold px-5 py-2.5 rounded-full text-[11px] font-bold shadow-md hover:bg-theme-teal transition-all hover:-translate-y-0.5"
+              className="flex items-center gap-1.5 bg-theme-navy text-theme-gold px-5 py-3 sm:py-2.5 rounded-full text-[11px] font-bold shadow-md hover:bg-theme-teal transition-all hover:-translate-y-0.5"
             >
               Enquire
             </a>

@@ -6,7 +6,7 @@ import TestimonialCard from '../components/TestimonialCard';
 import FAQSection from '../components/FAQSection';
 import SEO from '../components/SEO';
 import { tourPackages, testimonials, WHATSAPP_NUMBER } from '../data';
-import { ShieldCheck, MapPin, HeartHandshake, Car, MessageCircle, Compass } from 'lucide-react';
+import { ShieldCheck, MapPin, HeartHandshake, Car, Compass } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 import PageTransition from '../components/PageTransition';
 import InteractiveTravelMap from '../components/InteractiveTravelMap';
@@ -46,14 +46,14 @@ export default function Home() {
                   <h3 className="text-xl sm:text-2xl font-bold font-serif text-theme-heading leading-tight">Popular from Chennai</h3>
                   <p className="text-xs text-theme-muted font-light mt-1">Handpicked premium itineraries</p>
                 </div>
-                <a href="/india-tours" className="text-[10px] sm:text-xs font-bold text-theme-gold hover:text-[#c4a12f] uppercase tracking-wider transition-colors hidden sm:block">View All Packages &rarr;</a>
+                <a href="/india-tours" className="text-[10px] sm:text-xs font-bold text-theme-gold hover:text-[#c4a12f] uppercase tracking-wider transition-colors hidden sm:block py-2">View All Packages &rarr;</a>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {featuredPackages.map(pkg => (
                   <PackageCard key={pkg.id} pkg={pkg} displayCurrency={currency} />
               ))}
             </div>
-             <a href="/india-tours" className="text-[10px] text-center font-bold text-theme-gold uppercase tracking-wider block sm:hidden mt-2">View All Packages &rarr;</a>
+             <a href="/india-tours" className="text-[10px] text-center font-bold text-theme-gold uppercase tracking-wider block sm:hidden mt-2 py-3">View All Packages &rarr;</a>
           </section>
 
           {/* Interactive Travel Map */}
@@ -175,7 +175,7 @@ export default function Home() {
                        <p className="text-xs font-bold font-serif">Airport Drops</p>
                        <p className="text-[10px] text-slate-400 font-light">Chennai International</p>
                    </div>
-                   <a href="/rentals" className="text-[10px] font-bold text-theme-heading bg-theme-gold px-3 py-1.5 rounded-full hover:bg-theme-card transition-colors">Book</a>
+                   <a href="/rentals" className="text-[10px] font-bold text-theme-heading bg-theme-gold px-4 py-2.5 rounded-full hover:bg-theme-card transition-colors">Book</a>
                </div>
             </div>
           </div>
@@ -183,18 +183,7 @@ export default function Home() {
 
       </div>
       
-      {/* Sticky Mobile Enquiry Bar */}
-      <div className="lg:hidden fixed bottom-4 left-4 right-4 z-50">
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 bg-[#25D366] text-white p-4 rounded-2xl shadow-2xl font-bold text-sm tracking-wide"
-        >
-          <MessageCircle className="h-5 w-5 fill-current" />
-          Plan Your Trip via WhatsApp
-        </a>
-      </div>
+
     </div>
     </PageTransition>
   );

@@ -192,7 +192,7 @@ export default function WeatherWidget() {
             <button
               key={city}
               onClick={() => setSelectedCity(city)}
-              className={`px-3 py-1.5 rounded-lg text-[10px] font-bold border whitespace-nowrap transition-all ${
+              className={`px-3.5 py-2.5 sm:py-1.5 rounded-lg text-[10px] font-bold border whitespace-nowrap transition-all ${
                 isSelected 
                   ? 'bg-theme-navy text-white border-theme-navy shadow-sm' 
                   : 'bg-theme-navy/5 text-theme-muted border-theme-border hover:bg-theme-navy/10'
