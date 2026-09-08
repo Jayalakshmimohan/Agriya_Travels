@@ -50,7 +50,7 @@ const strList = (v: unknown, max = 8): string[] =>
         new Set(
           v
             .map((x) => str(x)?.toLowerCase())
-            .filter((x): x is string => Boolean(x) && x.length <= 60)
+            .filter((x): x is string => typeof x === 'string' && x.length > 0 && x.length <= 60)
         )
       ).slice(0, max)
     : [];

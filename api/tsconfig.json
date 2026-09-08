@@ -1,0 +1,17 @@
+{
+  "//": "The root tsconfig.json is the Vite client config: noEmit, moduleResolution bundler, DOM libs, JSX. Vercel's Node builder reads the nearest tsconfig when it compiles api/*.ts, so with only the root config every function compiled to nothing and every /api/* route returned FUNCTION_INVOCATION_FAILED — including a handler that imports nothing. tsx never noticed, because tsx ignores noEmit. This config is the server half: emit real CommonJS for Node, resolve extensionless relative imports the way CommonJS does, and keep DOM and JSX out.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": false
+  },
+  "include": ["**/*.ts", "../src/server/**/*.ts"]
+}
