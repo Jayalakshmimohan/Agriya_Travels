@@ -16,7 +16,8 @@
     "test": "tsx --test src/server/**/*.test.ts",
     "doctor": "tsx src/server/scripts/doctor.ts",
     "db:link": "tsx src/server/scripts/linkPackageDestinations.ts",
-    "db:seed:catalogue": "tsx src/server/scripts/seedCatalogue.ts"
+    "db:seed:catalogue": "tsx src/server/scripts/seedCatalogue.ts",
+    "build:api": "esbuild src/server/app.ts --bundle --platform=node --format=cjs --packages=external --target=node22 --outfile=server-build/server.cjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
