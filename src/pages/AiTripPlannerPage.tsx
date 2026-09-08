@@ -5,6 +5,7 @@ import TravelAssistantChat from '../components/TravelAssistantChat';
 import SEO from '../components/SEO';
 import PageTransition from '../components/PageTransition';
 import { Sparkles, Compass, MessagesSquare } from 'lucide-react';
+import { ASSISTANT_NAME } from '../data';
 
 type TabKey = 'assistant' | 'planner' | 'inspiration';
 
@@ -35,7 +36,7 @@ export default function AiTripPlannerPage() {
       <SEO 
         title="Trip Planner" 
         description="Plan your next holiday instantly with Agriya Travels' AI-Powered Trip Planner. Get a day-by-day customized itinerary based on your preferences."
-        keywords="AI trip planner, custom itinerary, holiday planning, smart travel assistant"
+        keywords="AI trip planner, Dora travel agent, custom itinerary, holiday planning, smart travel assistant"
       />
       <div className="bg-theme-card min-h-screen pb-20">
         <div className="bg-theme-navy text-white py-16 sm:py-24 relative overflow-hidden">
@@ -56,7 +57,7 @@ export default function AiTripPlannerPage() {
                   className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-2 cursor-pointer ${activeTab === 'assistant' ? 'bg-theme-gold text-theme-heading shadow-md' : 'text-slate-300 hover:text-white'}`}
                 >
                   <MessagesSquare className="h-4 w-4" />
-                  Travel Assistant
+                  Ask {ASSISTANT_NAME}
                 </button>
                 <button
                   onClick={() => handleTabChange('planner')}

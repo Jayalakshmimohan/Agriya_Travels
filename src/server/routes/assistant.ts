@@ -3,6 +3,7 @@ import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
 import { handleMessage } from '../services/travelAssistantService';
 import { hasGeminiKey } from '../ai/gemini';
+import { ASSISTANT_NAME } from '../../data';
 
 const router = Router();
 
@@ -42,7 +43,7 @@ router.post('/', assistantLimiter, async (req, res) => {
     return res.status(503).json({
       success: false,
       reason: 'no_api_key',
-      message: 'The travel assistant is not configured on this server.',
+      message: `${ASSISTANT_NAME} is not configured on this server.`,
     });
   }
 

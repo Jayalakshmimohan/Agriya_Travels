@@ -5,7 +5,7 @@ import {
   Train, Utensils, Landmark, BedDouble, Receipt, MessageCircle, ShieldAlert,
   MapPin, CalendarRange, Package as PackageIcon, Check, ClipboardList,
 } from 'lucide-react';
-import { WHATSAPP_NUMBER } from '../data';
+import { ASSISTANT_NAME, WHATSAPP_NUMBER } from '../data';
 
 interface CostLine {
   type: string;
@@ -129,7 +129,7 @@ export default function TravelAssistantChat({ compact = false }: TravelAssistant
       if (!res.ok || !json.success) {
         setError(
           json?.reason === 'no_api_key'
-            ? 'The travel assistant is not configured on this server yet.'
+            ? `${ASSISTANT_NAME} is not configured on this server yet.`
             : json?.message ?? 'Something went wrong. Please try again.'
         );
         return;
@@ -139,7 +139,7 @@ export default function TravelAssistantChat({ compact = false }: TravelAssistant
       setConversationId(reply.conversationId);
       setTurns((t) => [...t, { role: 'assistant', text: reply.message, reply }]);
     } catch {
-      setError('Could not reach the assistant. Please check your connection.');
+      setError(`Could not reach ${ASSISTANT_NAME}. Please check your connection.`);
     } finally {
       setBusy(false);
     }
@@ -150,8 +150,8 @@ export default function TravelAssistantChat({ compact = false }: TravelAssistant
   const whatsappUrl = (() => {
     const best = lastReply?.options?.[0];
     const text = best
-      ? `Hi Agriya Travels, your assistant suggested: ${best.title} — ${money(best.cost.totalInr)}. Please help me confirm real availability and book.`
-      : 'Hi Agriya Travels, I was using your travel assistant and would like some help.';
+      ? `Hi Agriya Travels, ${ASSISTANT_NAME} suggested: ${best.title} — ${money(best.cost.totalInr)}. Please help me confirm real availability and book.`
+      : `Hi Agriya Travels, I was chatting with ${ASSISTANT_NAME} and would like some help.`;
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
   })();
 
@@ -167,10 +167,10 @@ export default function TravelAssistantChat({ compact = false }: TravelAssistant
               </div>
               <div>
                 <h3 className="font-bold font-serif text-lg text-theme-heading">
-                  Tell us about your trip
+                  Hi, I&rsquo;m {ASSISTANT_NAME}
                 </h3>
                 <p className="text-[11px] text-theme-muted">
-                  Describe it in your own words — we'll work out the options and the cost.
+                  Tell me about your trip in your own words — I&rsquo;ll work out the options and the cost.
                 </p>
               </div>
             </div>

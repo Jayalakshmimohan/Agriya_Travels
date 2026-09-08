@@ -1,5 +1,14 @@
 import { TourPackage, Testimonial } from '../types';
 
+/**
+ * What the assistant calls itself, everywhere it is named.
+ *
+ * Centralised deliberately: the name appears in the panel header, the launcher
+ * tooltip, three aria-labels, the empty state, an error message and a WhatsApp
+ * prefill. Renaming it should be one edit, not a hunt.
+ */
+export const ASSISTANT_NAME = 'Dora';
+
 export const WHATSAPP_NUMBER = '919380054540'; 
 export const CAB_BOOKING_EMAIL = 'cabbooking@agriyatravels.com';
 export const TOUR_ENQUIRY_EMAIL = 'tourenquiry@agriyatravels.com';
