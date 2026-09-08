@@ -1,4 +1,5 @@
 import { WHATSAPP_NUMBER } from '../../data';
+import { notifyTeamOfLead } from './whatsappNotifyService';
 import { createLead } from './leadService';
 import { linkLead } from '../db/repositories/conversationRepo';
 import { totalTravellers, type TravelRequirement } from '../schemas/travelRequirement';
@@ -27,6 +28,12 @@ export interface HandoffResult {
   whatsappUrl: string;
   /** True when we could not reach them back, so the lead is a dead end. */
   contactMissing: boolean;
+  /**
+   * Whether the team also got a WhatsApp push. False whenever the WhatsApp
+   * Business Platform is not configured, which is the normal state until Meta
+   * onboarding completes — the lead and the deep link do not depend on it.
+   */
+  teamNotified: boolean;
 }
 
 const shown = (v: unknown, fallback = 'Not specified') =>
@@ -148,10 +155,19 @@ export async function handOffToTeam(args: {
   // Reference lets the agent find the conversation from the message alone.
   const text = `${summary}\n\n_Ref: enquiry #${lead.id}_`;
 
+  // Beside the deep link, never instead of it. The traveller may never tap
+  // send, so pushing to the team is what makes an unsent enquiry actionable —
+  // but it is strictly best-effort and cannot fail the handoff.
+  const notification = await notifyTeamOfLead({
+    requirement: args.requirement,
+    leadId: String(lead.id),
+  });
+
   return {
     leadId: String(lead.id),
     summary,
     whatsappUrl: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`,
     contactMissing: !args.requirement.contact.phone,
+    teamNotified: notification.sent,
   };
 }
